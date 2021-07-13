@@ -1,3 +1,5 @@
+:lastproofread: 2021-06-30
+
 .. _loopback-interface:
 
 ########
@@ -14,8 +16,8 @@ services on your local machine.
 
 .. hint:: A lookback interface is always up, thus it could be used for
    management traffic or as source/destination for and :abbr:`IGP (Interior
-   Gateway Protocol)` like :ref:`bgp` so your internal BGP link is not dependent
-   on physical link states and multiple routes can be chosen to the
+   Gateway Protocol)` like :ref:`routing-bgp` so your internal BGP link is not
+   dependent on physical link states and multiple routes can be chosen to the
    destination. A :ref:`dummy-interface` Interface should always be preferred
    over a :ref:`loopback-interface` interface.
 
@@ -53,7 +55,7 @@ Operation
 
 .. opcmd:: show interfaces loopback lo
 
-   Show detailed information on given loopback interface `lo`.
+   Show detailed information on the given loopback interface `lo`.
 
    .. code-block:: none
 

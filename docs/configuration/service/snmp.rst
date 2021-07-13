@@ -139,6 +139,8 @@ The securityapproach in v3 targets:
 
 * Authentication – to verify that the message is from a valid source.
 
+.. _snmp:v3_example:
+
 Example
 ^^^^^^^
 
@@ -201,7 +203,8 @@ VyOS MIBs
 
 All SNMP MIBs are located in each image of VyOS here: ``/usr/share/snmp/mibs/``
 
-you are be able to download the files with the a activate ssh service like this
+You are be able to download the files using SCP, once the SSH service
+has been activated like so
 
 .. code-block:: none
 
@@ -223,9 +226,12 @@ Once the script is uploaded, it needs to be configured via the command below.
   set service snmp script-extensions extension-name my-extension script your_script.sh
   commit
 
+.. stop_vyoslinter
 
 The OID ``.1.3.6.1.4.1.8072.1.3.2.3.1.1.4.116.101.115.116``, once called, will
 contain the output of the extension.
+
+.. start_vyoslinter
 
 .. code-block:: none
 
@@ -241,8 +247,11 @@ SolarWinds
 If you happen to use SolarWinds Orion as NMS you can also use the Device
 Templates Management. A template for VyOS can be easily imported.
 
+.. stop_vyoslinter
+
 Create a file named ``VyOS-1.3.6.1.4.1.44641.ConfigMgmt-Commands`` using the
 following content:
+
 
 .. code-block:: none
 
@@ -264,3 +273,4 @@ following content:
 .. _SNMPv2: https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol#Version_2
 .. _SNMPv3: https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol#Version_3
 
+.. start_vyoslinter

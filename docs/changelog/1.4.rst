@@ -1,0 +1,902 @@
+###########
+1.4 Sagitta
+###########
+
+..
+   Please don't add anything by hand.
+   This file is managed by the script:
+   _ext/releasenotes.py
+
+
+2021-07-11
+==========
+
+* :vytask:`T3665` (bug): Missing VRF support for VxLAN but already documented
+
+
+2021-07-10
+==========
+
+* :vytask:`T3636` (feature): SSTP / L2TP ipv6 support broken
+
+
+2021-07-09
+==========
+
+* :vytask:`T3667` (bug): brctl is damaged
+
+
+2021-07-06
+==========
+
+* :vytask:`T3660` (feature): Conntrack-Sync configuration command to specify destination udp port for peer
+
+
+2021-07-03
+==========
+
+* :vytask:`T57` (enhancment): Make it possible to disable the entire IPsec peer
+
+
+2021-07-01
+==========
+
+* :vytask:`T3658` (feature): Add support for dhcpdv6 fixed-prefix6
+* :vytask:`T2035` (bug): Executing vyos-smoketest multiple times makes ssh test fail on execution
+
+
+2021-06-29
+==========
+
+* :vytask:`T3593` (bug): PPPoE server called-sid format does not work
+* :vytask:`T3657` (default): BGP neighbors ipv6 not able to establish with IPv6 link-local addresses
+* :vytask:`T1441` (feature): Add support for IPSec XFRM interfaces
+
+
+2021-06-27
+==========
+
+* :vytask:`T3653` (default): Cloudinit subnet error if a cidr (/24) is used instead of a subnet mask (255.255.255.0)
+
+
+2021-06-25
+==========
+
+* :vytask:`T3641` (feature): Upgrade base system from Debian Buster -> Debian Bullseye
+* :vytask:`T3649` (feature): Add bonding additional hash-policy
+
+
+2021-06-23
+==========
+
+* :vytask:`T3647` (feature): Bullseye: gcc defaults to passing --as-needed to linker
+* :vytask:`T3644` (default): Replace GCC with a simpler preprocessor for including nested XML snippets in XML documents
+* :vytask:`T3356` (feature): Script for remote file transfers
+
+
+2021-06-22
+==========
+
+* :vytask:`T3629` (bug): IPoE server shifting address in the range
+* :vytask:`T3645` (feature): Bullseye: ethtool changed output for ring-buffer information
+* :vytask:`T3582` (default): 'delete log file' does not work
+
+
+2021-06-21
+==========
+
+* :vytask:`T3563` (default): commit-archive breaks with IPv6 source addresses
+
+
+2021-06-20
+==========
+
+* :vytask:`T3637` (bug): vrf: bind-to-all didn't work properly
+* :vytask:`T3639` (default): GCC preprocessor clobbers C comments
+
+
+2021-06-19
+==========
+
+* :vytask:`T3633` (feature): Add LRO offload for interface ethernet
+* :vytask:`T3632` (bug): policy: route-map: unable to configure route-target / site-of-origin
+
+
+2021-06-18
+==========
+
+* :vytask:`T3634` (feature): Add op command option for ping for do not fragment bit to be set
+* :vytask:`T3599` (default): Migrate NHRP to XML/Python
+
+
+2021-06-17
+==========
+
+* :vytask:`T3624` (feature): BGP: add support for extended community bandwidth definition
+
+
+2021-06-16
+==========
+
+* :vytask:`T3623` (default): Fix for dummy interface option in the operational command "clear interfaces dummy"
+* :vytask:`T3630` (feature): op-mode: add "show version kernel" command
+
+
+2021-06-13
+==========
+
+* :vytask:`T3620` (feature): Rename WWAN interface from wirelessmodem to wwan to use QMI interface
+* :vytask:`T2173` (feature): Add the ability to use VRF on VTI interfaces
+* :vytask:`T3622` (feature): WWAN: add support for APN authentication
+* :vytask:`T3606` (bug): SNMP unknown notification OID
+* :vytask:`T3621` (bug): PPPoE interface does not validate if password is supplied when username is set
+
+
+2021-06-12
+==========
+
+* :vytask:`T3611` (bug): WWAN interface (MC7710) no longer works on Kernel 5.10
+* :vytask:`T1534` (bug): IPSec w/ IKEv2 Invalid local-address "any"
+* :vytask:`T3616` (bug): Update to FastAPI causes regression in vyos-http-api-server
+
+
+2021-06-11
+==========
+
+* :vytask:`T3614` (bug): Container network name with hyphen fail
+
+
+2021-06-10
+==========
+
+* :vytask:`T3250` (bug): PPPoE server:  wrong local usernames
+* :vytask:`T3138` (bug): ddclient improperly updated when apply rfc2136 config
+* :vytask:`T2620` (feature): Add ipsec peer-name to log to simplifies grepping and troubleshooting
+* :vytask:`T2645` (default): Editing route-map Action Requires New Rule
+
+
+2021-06-08
+==========
+
+* :vytask:`T3605` (default): Allow to set prefer-global for ipv6-next-hop
+* :vytask:`T3607` (feature): [route-map] set ipv6 next-hop prefer-global
+* :vytask:`T3289` (bug): No description for node "service" conf-mode
+
+
+2021-06-07
+==========
+
+* :vytask:`T3461` (bug): OpenConnect Server redundancy check
+* :vytask:`T3455` (bug): system users can not be added in "edit"
+* :vytask:`T3588` (default): IPSec: migrate no longer available options from CLI which are now hardcoded/enabled in strongSwan
+
+
+2021-06-06
+==========
+
+* :vytask:`T842` (feature): Adopt VyOS CLI to latest StrongSwan options and deprecated Keywords
+
+
+2021-06-04
+==========
+
+* :vytask:`T3595` (default): Cannot create new VTI interface
+* :vytask:`T3592` (feature): Set default TTL 64 for tunnels
+
+
+2021-06-03
+==========
+
+* :vytask:`T3384` (feature): Support UDP bandwidth testing
+
+
+2021-06-02
+==========
+
+* :vytask:`T3233` (bug): Interface redirect to dum0
+
+
+2021-06-01
+==========
+
+* :vytask:`T3585` (default): Fix NHRP module for updated interfaces tunnel syntax
+* :vytask:`T3594` (bug): Disable by default service strongswan-starter
+
+
+2021-05-30
+==========
+
+* :vytask:`T3524` (default): Please implement  bgp graceful-shutdown
+* :vytask:`T3518` (bug): Warning messages when using SCP commit-archive
+* :vytask:`T3093` (default): Add xml for vpn ipsec
+* :vytask:`T1866` (bug): Commit archive over SFTP doesn't work with non-standard ports
+* :vytask:`T3590` (feature): bgp: add option for limiting maximum number of prefixes to be sent to a peer
+* :vytask:`T3589` (feature): op-mode: support clearing out logfiles from CLI
+* :vytask:`T2641` (feature): Rewrite vpn ipsec OP commands in new style XML syntax
+* :vytask:`T3351` (feature): Installer checking MD5 checksums on the ISO image
+
+
+2021-05-29
+==========
+
+* :vytask:`T1944` (bug): FRR: Invalid route in BGP causes update storm, memory leak, and failure of Zebra. 
+* :vytask:`T1888` (feature): Update to StrongSwan 5.9.1
+* :vytask:`T1995` (bug): "show vpn ike sa" command always show child-sas as down
+
+
+2021-05-27
+==========
+
+* :vytask:`T3561` (feature): router-advert: support advertising specific routes
+* :vytask:`T2669` (bug): DHCP-server overlapping ranges.
+
+
+2021-05-26
+==========
+
+* :vytask:`T3540` (bug): Keepalived memory utilisation issue when constantly getting its state in JSON format
+
+
+2021-05-25
+==========
+
+* :vytask:`T3569` (bug): Firewall wrong completion help values
+
+
+2021-05-24
+==========
+
+* :vytask:`T3575` (bug): pseudo-ethernet: must check source-interface MTU
+* :vytask:`T3571` (bug): Broken Show Tab Complete
+* :vytask:`T3555` (bug): GRE TAP tunnel does not silent fragment packets / kernel fix available
+* :vytask:`T3576` (bug): ISIS does not support IPV6
+
+
+2021-05-23
+==========
+
+* :vytask:`T3570` (default): Prevent setting of a larger MTU on child interfaces
+* :vytask:`T3573` (bug): as-path-prepend Description Invalid
+* :vytask:`T3572` (feature): Basic Drive Diagnostic Tools
+
+
+2021-05-22
+==========
+
+* :vytask:`T3564` (default): Multiple BGP Confederation Peers Not Allowed
+
+
+2021-05-21
+==========
+
+* :vytask:`T3551` (bug): QoS control failure of VLAN sub interface
+
+
+2021-05-20
+==========
+
+* :vytask:`T3554` (feature): Add area-type stub for ospfv3
+* :vytask:`T3565` (feature): sysctl: rewrite in XML and Python and drop from vyatta-cfg-system
+
+
+2021-05-19
+==========
+
+* :vytask:`T3562` (feature): Update Accel-PPP to a newer revision
+* :vytask:`T3559` (feature): Add restart op-command for OpenConnect Server
+
+
+2021-05-18
+==========
+
+* :vytask:`T3525` (default): VMWare resume script syntax errors
+
+
+2021-05-17
+==========
+
+* :vytask:`T3557` (bug): ddclient: FileNotFoundError in op-mode
+
+
+2021-05-15
+==========
+
+* :vytask:`T3549` (bug): DHCPv6 "service dhcpv6-server global-parameters name-server" is not correctly exported to dhcpdv6.conf when multiple name-server entries are present
+* :vytask:`T3532` (bug): Not possible to change ethertype after interface creation
+* :vytask:`T3550` (bug): Router-advert completion typo
+* :vytask:`T3547` (feature): conntrackd: remove deprecated config options
+* :vytask:`T3535` (feature): Rewrite vyatta-conntrack-sync in new XML and Python flavor
+
+
+2021-05-14
+==========
+
+* :vytask:`T3346` (bug): nat 4-to-5 migration script fails when a 'source' or 'destination' node exists but there are no rules
+* :vytask:`T3248` (default): Deal with VRRP mode-force command that exists in 1.2 but not in 1.3
+* :vytask:`T2809` (bug): An issue with config migration (system ntp server)
+* :vytask:`T3426` (default): add support for script arguments to vyos-configd
+
+
+2021-05-13
+==========
+
+* :vytask:`T3539` (bug): Typo in RPKI interface definition
+* :vytask:`T439` (feature): local PBR support
+* :vytask:`T3544` (feature): DHCP server should validate configuration before applying it
+* :vytask:`T3543` (feature): Support for setting lacp_rate on LACP bonded interfaces
+
+
+2021-05-12
+==========
+
+* :vytask:`T3302` (default): Make vyos-configd relay stdout from scripts to the user's console
+* :vytask:`T3542` (bug): udev net.rules not installed in image since may 2nd
+
+
+2021-05-10
+==========
+
+* :vytask:`T3374` (bug): IPv6 GRE Tunnel issues
+
+
+2021-05-09
+==========
+
+* :vytask:`T3530` (bug): BGP peer-group can't contain a hyphen
+* :vytask:`T3531` (bug): policy: prefix-list and route-map names do not allow underscores in names (FRR does)
+
+
+2021-05-07
+==========
+
+* :vytask:`T3333` (bug): "show vpn ipsec sa" reports ESP tunnels to be up when they are not.
+
+
+2021-05-06
+==========
+
+* :vytask:`T3523` (bug): VRF BGP daemon route-map command missing
+* :vytask:`T3519` (bug): Cannot add / assign L2TPv3 to vrf
+
+
+2021-05-05
+==========
+
+* :vytask:`T3520` (bug): Cannot add tunnel interface to isis within vrf
+* :vytask:`T3335` (bug): Some OSPFv3 show commands do not work
+
+
+2021-05-04
+==========
+
+* :vytask:`T3504` (feature): BGP Per Peer Graceful Restart
+
+
+2021-05-02
+==========
+
+* :vytask:`T3511` (bug): Update libnss-mapuser and libpam-radius packages from CUMULUS Linux
+* :vytask:`T3510` (bug): RADIUS usersname is not shown on CLI
+
+
+2021-05-01
+==========
+
+* :vytask:`T3379` (feature): Add global-parameters name-server  for dhcpv6-server
+* :vytask:`T3491` (default): Change Kernel HZ to 1000
+
+
+2021-04-29
+==========
+
+* :vytask:`T3503` (bug): "route-reflector-client" fails when "remote-as" is "internal"
+* :vytask:`T3502` (bug): "system ip multipath layer4-hashing" doesn't work
+
+
+2021-04-28
+==========
+
+* :vytask:`T3473` (bug): IPSec op-mode show sa error
+
+
+2021-04-27
+==========
+
+* :vytask:`T3458` (default): vyos docs missing gretap from tunnel section
+* :vytask:`T2946` (bug): call to commandd 'stty_size' cause show interfaces API to fail.
+
+
+2021-04-26
+==========
+
+* :vytask:`T3487` (bug): Specifying an invalid "interface address" like dhcph leads to commit error
+
+
+2021-04-25
+==========
+
+* :vytask:`T3490` (bug): priority inversion on PBR "policy route" create, breaks default route from dhcp (live iso)
+* :vytask:`T3468` (bug): Tunnel interfaces aren't suggested as being available for bridging (regression)
+* :vytask:`T3497` (bug): Prefix list with rule containing only action is not detected as error during parse
+* :vytask:`T3492` (bug): BGP Configuration Migration failed (badly!) from rolling 202102240218 to rolling 202104221210
+* :vytask:`T1802` (feature): Wireguard QR code in cli for mobile devices
+
+
+2021-04-24
+==========
+
+* :vytask:`T3472` (bug): commit-confirm script not found
+* :vytask:`T3439` (bug): Commit-archive location not working for scp
+
+
+2021-04-23
+==========
+
+* :vytask:`T3395` (bug): WAN load-balancing fails with nexthop dhcp
+* :vytask:`T3290` (bug): Disabling GRE conntrack module fails
+
+
+2021-04-20
+==========
+
+* :vytask:`T3488` (bug): Specifying an invalid "interface address" like dhcph leads to commit error
+
+
+2021-04-18
+==========
+
+* :vytask:`T3481` (default): Exclude tag node values from key mangling
+* :vytask:`T3475` (bug): XML dictionary cache unable to process syntaxVersion elements
+
+
+2021-04-17
+==========
+
+* :vytask:`T3470` (bug): as-override isn't applied to frr
+
+
+2021-04-15
+==========
+
+* :vytask:`T3386` (bug): PPPoE-server don't start with local authentication
+* :vytask:`T3190` (feature): Unable to subtract value from local-preference in route-map
+
+
+2021-04-14
+==========
+
+* :vytask:`T3398` (bug): Can't commit
+* :vytask:`T3055` (bug): op-mode incorrect naming fo ipsec policy-based tunnels 
+
+
+2021-04-13
+==========
+
+* :vytask:`T3436` (feature): Refactoring ospf op-mode for support vrf
+* :vytask:`T3434` (feature): Refactoring bgp op-mode for support vrf
+
+
+2021-04-12
+==========
+
+* :vytask:`T3454` (enhancment): dhclient reject option
+* :vytask:`T3328` (bug): Bgp not possible to delete bgp route-map 
+
+
+2021-04-11
+==========
+
+* :vytask:`T3435` (bug): NAT rules show corruption
+
+
+2021-04-10
+==========
+
+* :vytask:`T3460` (bug): bgp, Configuration FRR failed while commiting code
+
+
+2021-04-09
+==========
+
+* :vytask:`T3464` (bug): OSPF: route-map names containing a hypen are not "found"
+
+
+2021-04-08
+==========
+
+* :vytask:`T3462` (default): show ipv6 bgp -- missing
+* :vytask:`T3456` (bug): firewall: rules that should be deleted seem to be still in use
+* :vytask:`T3463` (bug): Prevent IPv4 Route exchange with IPv6 neighbors
+
+
+2021-04-05
+==========
+
+* :vytask:`T3438` (bug): VRF: removing vif which belongs to a vrf, will delete the entire vrf from the operating system
+* :vytask:`T3418` (bug): BGP: system wide known interface can not be used as neighbor
+
+
+2021-04-04
+==========
+
+* :vytask:`T3457` (feature): Output the "monitor log" command in a colorful way
+
+
+2021-03-31
+==========
+
+* :vytask:`T3445` (bug): vyos-1x build include not all nodes
+
+
+2021-03-30
+==========
+
+* :vytask:`T3448` (bug): Loading vyos on a system without xdp installed fails
+
+
+2021-03-29
+==========
+
+* :vytask:`T3415` (feature): bridge: add support for isolated interfaces (private-vlan)
+* :vytask:`T1711` (feature): BGP - migrate from tagNode to node (remove ASN from tagNode)
+
+
+2021-03-28
+==========
+
+* :vytask:`T3440` (bug): HTTP API: give uvicorn time to initialize before restarting Nginx proxy
+
+
+2021-03-27
+==========
+
+* :vytask:`T3423` (bug): Cannot create ipv4 static route for default gateway in vrf
+
+
+2021-03-26
+==========
+
+* :vytask:`T3412` (default): HTTP API: move to FastAPI as web framework
+* :vytask:`T2397` (feature): HTTP API: export OpenAPI definition
+
+
+2021-03-24
+==========
+
+* :vytask:`T3419` (bug): show interfaces | strip-private fails
+* :vytask:`T3307` (default): address prefix destination NAT fails to render nftables rules / commit
+
+
+2021-03-22
+==========
+
+* :vytask:`T3402` (feature): Add VyOS programming library for operational level commands
+* :vytask:`T3284` (bug): merge/load fail silently if unable to resolve host
+
+
+2021-03-21
+==========
+
+* :vytask:`T3417` (default): ISIS: provide per VRF instance support
+* :vytask:`T3416` (bug): NTP: when running inside a VRF op-mode commands do not work
+
+
+2021-03-20
+==========
+
+* :vytask:`T3392` (bug): vrrp over dhcp default route bug (unexpected vrf)
+* :vytask:`T3373` (feature): Upgrade to SaltStack version 3002.5
+* :vytask:`T3329` (default): "system conntrack ignore" rules can no longer be created due to an iptables syntax change
+* :vytask:`T3300` (feature): Add DHCP default route distance
+* :vytask:`T3306` (feature): Extend set route-map aggregator as to 4 Bytes 
+
+
+2021-03-18
+==========
+
+* :vytask:`T3411` (default): Extend the redirect_stdout context manager in vyos-configd to redirect stdout from subprocesses
+* :vytask:`T3271` (bug): qemu-kvm grub issue
+
+
+2021-03-17
+==========
+
+* :vytask:`T3413` (bug): Configuring invalid IPv6 EUI64 address results in "OSError: illegal IP address string passed to inet_pton"
+
+
+2021-03-15
+==========
+
+* :vytask:`T3354` (default): Convert strip-private script from Perl to Python
+
+
+2021-03-14
+==========
+
+* :vytask:`T3345` (default): BGP: add per VRF instance support
+* :vytask:`T3344` (default): Per VRF dynamic routing support
+* :vytask:`T3325` (bug): Bgp listen-range wrong commit message
+* :vytask:`T1513` (default): Move OSPF and RIP interface configuration under protocols
+
+
+2021-03-13
+==========
+
+* :vytask:`T3406` (bug): tunnel: interface no longer supports specifying encaplimit none - or migrator is missing
+* :vytask:`T3407` (bug): console-server: do not allow to spawn a console-server session on serial port used by "system console"
+
+
+2021-03-11
+==========
+
+* :vytask:`T3305` (bug): Ingress qdisc does not work anymore in 1.3-rolling-202101 snapshot
+* :vytask:`T2927` (bug): isc-dhcpd release and expiry events never execute
+
+
+2021-03-09
+==========
+
+* :vytask:`T3389` (default): gretap tunnel type missing from vyos documentation after renamed from gre-bridge
+* :vytask:`T3382` (bug): Error creating Console Server
+
+
+2021-03-08
+==========
+
+* :vytask:`T3387` (bug): Command "Monitor vpn ipsec"  is not working
+
+
+2021-03-07
+==========
+
+* :vytask:`T3388` (bug): show interfaces doesn't display pppoeX
+* :vytask:`T3211` (feature): ability to redistribute ISIS into other routing protocols
+
+
+2021-03-04
+==========
+
+* :vytask:`T3377` (bug): show interfaces throws error
+
+
+2021-03-02
+==========
+
+* :vytask:`T3375` (bug): Interface becomes up at boot even when disabled
+
+
+2021-02-28
+==========
+
+* :vytask:`T3370` (bug): dhcp: Invalid domain name "private"
+* :vytask:`T3369` (feature): VXLAN: add IPv6 underlay support
+* :vytask:`T3363` (bug): VyOS-Build interactive prompt when using Podman
+* :vytask:`T3320` (bug): Bgp neighbor peer-group without peer-group fail
+
+
+2021-02-27
+==========
+
+* :vytask:`T3365` (bug): Bgp neighbor interface ordering for remote-as
+* :vytask:`T3225` (bug): Adding a BGP neighbor with an address on a local interface throws a vyos.frr.CommitError: Configuration FRR failed while committing code: ''
+* :vytask:`T3368` (feature): macsec: add support for gcm-aes-256 cipher
+* :vytask:`T3173` (feature): Need 'nopmtudisc' option for tunnel interface
+
+
+2021-02-26
+==========
+
+* :vytask:`T3324` (bug): Bgp space in the password
+* :vytask:`T3357` (default): HTTP-API redirect from http correct https port
+* :vytask:`T3323` (bug): Bgp ttl-security and ebgp-multihop fail
+
+
+2021-02-24
+==========
+
+* :vytask:`T3303` (feature): Change welcome message on boot
+
+
+2021-02-22
+==========
+
+* :vytask:`T3322` (bug): Bgp neighbor timers not applyed to FRR config
+* :vytask:`T3327` (bug): OSPFv3: Cannot add dummy interface
+
+
+2021-02-21
+==========
+
+* :vytask:`T3331` (bug): Bgp unsuppress-map should be as "value leafNode"
+* :vytask:`T3330` (bug): Bgp capability orf prefix-list fail
+* :vytask:`T3163` (feature): ethernet ring-buffer can be set with an invalid value
+
+
+2021-02-19
+==========
+
+* :vytask:`T3326` (bug): OSPFv3: Cannot add L2TPv3 interface
+* :vytask:`T3332` (bug): BGP unnumbered - UnboundLocalError: local variable 'peer_group' referenced before assignment
+
+
+2021-02-18
+==========
+
+* :vytask:`T3259` (default): many dnat rules makes the vyos http api crash, even showConfig op timeouts
+
+
+2021-02-17
+==========
+
+* :vytask:`T3312` (feature): SolarFlare NICs support
+
+
+2021-02-16
+==========
+
+* :vytask:`T3313` (bug): ospfv3 interface missing options
+* :vytask:`T3318` (feature): Update Linux Kernel to v5.4.129 / 5.10.47
+
+
+2021-02-15
+==========
+
+* :vytask:`T3311` (bug): BGP Error: Remote AS must be set for neighbor or peer-group
+
+
+2021-02-14
+==========
+
+* :vytask:`T2848` (feature): bgp-add-path configuration options
+* :vytask:`T1875` (feature): Add the ability to use network address as BGP neighbor (bgp listen range)
+
+
+2021-02-12
+==========
+
+* :vytask:`T3301` (bug): Wrong format and valueHelp for policy as-path-list regex
+
+
+2021-02-11
+==========
+
+* :vytask:`T3281` (default): Rewrite protocol RIPng [conf-mode] to new XML/Python style
+* :vytask:`T3282` (default): Add XML for [conf-mode] RIPng
+* :vytask:`T3279` (default): Rewrite protocol STATIC [op-mode] to new XML/Python style
+* :vytask:`T3297` (bug): Optimize irrelevant error stack hints
+
+
+2021-02-08
+==========
+
+* :vytask:`T3295` (feature): Update Linux Kernel to v5.4.96 / 5.10.14
+
+
+2021-02-05
+==========
+
+* :vytask:`T3030` (feature): Support ERSPAN Tunnel Protocol
+
+
+2021-02-04
+==========
+
+* :vytask:`T3283` (feature): Support for IPv4 neigh tables
+* :vytask:`T3280` (default): Add XML for [conf-mode] STATIC
+
+
+2021-02-03
+==========
+
+* :vytask:`T3278` (feature): Add XML for "protocols vrf" [conf-mode]
+* :vytask:`T3239` (default): XML: override 'defaultValue' for mtu of certain interfaces; remove workarounds
+* :vytask:`T2910` (feature): XML: generator should support override of variables
+
+
+2021-02-02
+==========
+
+* :vytask:`T3018` (bug): Unclear behaviour when configuring vif and vif-s interfaces
+* :vytask:`T3255` (default): Rewrite protocol RPKI to new XML/Python style
+* :vytask:`T3263` (feature): OSPF Hello subsecond timer
+
+
+2021-01-31
+==========
+
+* :vytask:`T3276` (feature): Update Linux Kernel to v5.4.94 / 5.10.12
+
+
+2021-01-30
+==========
+
+* :vytask:`T3240` (feature): Support per-interface DHCPv6 DUIDs
+* :vytask:`T3273` (default): PPPoE static default-routes deleted on interface down when not added by interface up
+
+
+2021-01-29
+==========
+
+* :vytask:`T3261` (bug): Does not possible to disable pppoe client interface.
+* :vytask:`T3272` (default): OSPF: interface config is not removed
+
+
+2021-01-27
+==========
+
+* :vytask:`T3257` (feature): tcpdump supporting complete protocol
+* :vytask:`T3244` (default): Rewrite protocol OSPFv3 to new XML/Python style
+
+
+2021-01-26
+==========
+
+* :vytask:`T3251` (bug): PPPoE client trying to authorize with the wrong username
+* :vytask:`T3256` (default): Add XML for protocol RPKI [conf-mode]
+
+
+2021-01-25
+==========
+
+* :vytask:`T3249` (feature): Support operation mode forwarding table output
+
+
+2021-01-24
+==========
+
+* :vytask:`T3227` (bug): Latest releases don't work with RPKI (crash)
+* :vytask:`T3230` (bug): RPKI can't be deleted
+* :vytask:`T3221` (bug): FRR config
+* :vytask:`T3245` (default): Add XML for protocol ospfv3 [conf-mode]
+
+
+2021-01-23
+==========
+
+* :vytask:`T3236` (default): Add XML for [conf-mode] OSPF
+
+
+2021-01-17
+==========
+
+* :vytask:`T3222` (bug): BGP dampening description
+* :vytask:`T3226` (bug): Repair bridge smoke test damage
+
+
+2021-01-16
+==========
+
+* :vytask:`T3215` (bug): show ipv6 route Broken on 1.4 Rolling
+* :vytask:`T3157` (bug): salt-minion fails to start due to permission error accessing /root/.salt/minion.log
+* :vytask:`T3137` (feature): Let VLAN aware bridge approach the behavior of professional equipment
+
+
+2021-01-15
+==========
+
+* :vytask:`T3210` (feature): ISIS three-way-handshake
+* :vytask:`T3184` (feature): Add correct desctiptions for BGP neighbors
+
+
+2021-01-14
+==========
+
+* :vytask:`T3213` (bug): show interface command python error
+
+
+2021-01-12
+==========
+
+* :vytask:`T3205` (bug): Does not possible to configure tunnel mode gre-bridge
+
+
+2020-12-20
+==========
+
+* :vytask:`T3132` (feature): Enable egress flow accounting
+
+
+2020-07-20
+==========
+
+* :vytask:`T2717` (default): Wrong DHCP server pool size in statistics

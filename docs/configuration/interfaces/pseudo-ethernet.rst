@@ -1,8 +1,10 @@
+:lastproofread: 2021-07-09
+
 .. _pseudo-ethernet-interface:
 
-#######################
-Pseudo Ethernet/MACVLAN
-#######################
+#########################
+MACVLAN - Pseudo Ethernet
+#########################
 
 Pseudo-Ethernet or MACVLAN interfaces can be seen as subinterfaces to regular
 ethernet interfaces. Each and every subinterface is created a different media
@@ -36,7 +38,7 @@ Ethernet interfaces:
   applies to:
   - VMware machines using default settings
   - Network switches with security settings allowing only a single MAC address
-  - xDSL modems that try to lear the MAC address of the NIC
+  - xDSL modems that try to learn the MAC address of the NIC
 
 *************
 Configuration

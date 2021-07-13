@@ -10,9 +10,9 @@ Prerequisites
 
 There are different ways you can build VyOS.
 
-Building using a :ref:`build_docker` container, although not the only way, is the
-easiest way as all dependencies are managed for you. However, you can also
-set up your own build machine and run a :ref:`build_native`.
+Building using a :ref:`build_docker` container, although not the only way,
+is the easiest way as all dependencies are managed for you. However, you can
+also set up your own build machine and run a :ref:`build_native`.
 
 .. note:: Starting with VyOS 1.2 the release model of VyOS has changed. VyOS
    is now **free as in speech, but not as in beer**. This means that while
@@ -95,8 +95,9 @@ The container can also be built directly from source:
   $ docker build -t vyos/vyos-build:crux docker # For VyOS 1.2
   $ docker build -t vyos/vyos-build:current docker      # For rolling release
 
-.. note:: Since VyOS has switched to Debian (10) Buster in its ``current`` branch,
-   you will require individual container for `current` and `crux` builds.
+.. note:: Since VyOS has switched to Debian (10) Buster in its ``current``
+   branch, you will require individual container for `current` and `crux`
+   builds.
 
 Tips and Tricks
 ---------------
@@ -125,7 +126,7 @@ per release train (`current` or `crux`) - container. Add the following to your
       -e GOSU_UID=$(id -u) -e GOSU_GID=$(id -g) \
       vyos/vyos-build:crux bash'
 
-Now you are prepared with two new aliases ``vybld`` and ``vybld_crux`` to spwan
+Now you are prepared with two new aliases ``vybld`` and ``vybld_crux`` to spawn
 your development containers in your current working directory.
 
 .. _build_native:
@@ -175,7 +176,8 @@ Please note as this will differ for both `current` and `crux`.
   # For VyOS 1.3 (equuleus, current)
   $ git clone -b current --single-branch https://github.com/vyos/vyos-build
 
-Now a fresh build of the VyOS ISO can begin. Change directory to the ``vyos-build`` directory and run:
+Now a fresh build of the VyOS ISO can begin. Change directory to the
+``vyos-build`` directory and run:
 
 .. code-block:: none
 
@@ -186,6 +188,21 @@ Now a fresh build of the VyOS ISO can begin. Change directory to the ``vyos-buil
   # For VyOS 1.3 (equuleus, current)
   $ docker run --rm -it --privileged -v $(pwd):/vyos -w /vyos vyos/vyos-build:current bash
 
+.. code-block:: none
+
+  # For MacOS (crux, equuleus, sagitta)
+  $ git clone https://github.com/vyos/vyos-utils-misc
+  $ cd build-tools/macos-build 
+
+  # For VyOS 1.2 (crux)
+  $ os=jessie64 branch=crux make build
+
+  # For VyOS 1.3 (equuleus)
+  $ os=buster64 branch=equuleus make build
+
+  # For VyOS 1.4 (sagitta)
+  $ os=buster64 branch=sagitta make build
+
 Start the build:
 
 .. code-block:: none
@@ -193,17 +210,13 @@ Start the build:
   vyos_bld@d4220bb519a0:/vyos# ./configure --architecture amd64 --build-by "j.randomhacker@vyos.io"
   vyos_bld@d4220bb519a0:/vyos# sudo make iso
 
-When the build is successful, the resulting iso can be found inside the ``build``
-directory as ``live-image-[architecture].hybrid.iso``.
+When the build is successful, the resulting iso can be found inside the
+``build`` directory as ``live-image-[architecture].hybrid.iso``.
 
 Good luck!
 
-.. hint:: Attempting to use the Docker build image on MacOS will fail as
-   Docker does not expose all the filesystem feature required to the container.
-   Building within a VirtualBox server on Mac however possible.
-
-.. hint:: Building VyOS on Windows WSL2 with Docker integrated into WSL2 will work
-   like a charm. No problems are known so far!
+.. hint:: Building VyOS on Windows WSL2 with Docker integrated into WSL2 will
+   work like a charm. No problems are known so far!
 
 .. _build source:
 
@@ -255,15 +268,97 @@ The full and current list can be generated with ``./configure --help``:
     --custom-package CUSTOM_PACKAGE
                           Custom package to install from repositories
 
+.. _iso_build_issues:
+
+ISO Build Issues
+----------------
+
+There are (rare) situations where building an ISO image is not possible at all
+due to a broken package feed in the background. APT is not very good at
+reporting the root cause of the issue. Your ISO build will likely fail with a
+more or less similar looking error message:
+
+.. code-block:: none
+
+  The following packages have unmet dependencies:
+   vyos-1x : Depends: accel-ppp but it is not installable
+  E: Unable to correct problems, you have held broken packages.
+  P: Begin unmounting filesystems...
+  P: Saving caches...
+  Reading package lists...
+  Building dependency tree...
+  Reading state information...
+  Del frr-pythontools 7.5-20210215-00-g8a5d3b7cd-0 [38.9 kB]
+  Del accel-ppp 1.12.0-95-g59f8e1b [475 kB]
+  Del frr 7.5-20210215-00-g8a5d3b7cd-0 [2671 kB]
+  Del frr-snmp 7.5-20210215-00-g8a5d3b7cd-0 [55.1 kB]
+  Del frr-rpki-rtrlib 7.5-20210215-00-g8a5d3b7cd-0 [37.3 kB]
+  make: *** [Makefile:30: iso] Error 1
+  (10:13) vyos_bld ece068908a5b:/vyos [current] #
+
+To debug the build process and gain additional information of what could be the
+root cause wou need to `chroot` into the build directry. This is explained in
+the following step by step procedure:
+
+.. code-block:: none
+
+  vyos_bld ece068908a5b:/vyos [current] # sudo chroot build/chroot /bin/bash
+
+We now need to mount some required, volatile filesystems
+
+.. code-block:: none
+
+  (live)root@ece068908a5b:/# mount -t proc none /proc
+  (live)root@ece068908a5b:/# mount -t sysfs none /sys
+  (live)root@ece068908a5b:/# mount -t devtmpfs none /dev
+
+We now are free to run any command we would like to use for debugging, e.g.
+re-installing the failed package after updating the repository.
+
+.. code-block:: none
+
+  (live)root@ece068908a5b:/# apt-get update; apt-get install vyos-1x
+  Get:1 file:/root/packages ./ InRelease
+  Ign:1 file:/root/packages ./ InRelease
+  Get:2 file:/root/packages ./ Release [1235 B]
+  Get:2 file:/root/packages ./ Release [1235 B]
+  Get:3 file:/root/packages ./ Release.gpg
+  Ign:3 file:/root/packages ./ Release.gpg
+  Hit:4 http://repo.powerdns.com/debian buster-rec-43 InRelease
+  Hit:5 http://repo.saltstack.com/py3/debian/10/amd64/archive/3002.2 buster InRelease
+  Hit:6 http://deb.debian.org/debian bullseye InRelease
+  Hit:7 http://deb.debian.org/debian buster InRelease
+  Hit:8 http://deb.debian.org/debian-security buster/updates InRelease
+  Hit:9 http://deb.debian.org/debian buster-updates InRelease
+  Hit:10 http://deb.debian.org/debian buster-backports InRelease
+  Hit:11 http://dev.packages.vyos.net/repositories/current current InRelease
+  Reading package lists... Done
+  N: Download is performed unsandboxed as root as file '/root/packages/./InRelease' couldn't be accessed by user '_apt'. - pkgAcquire::Run (13: Permission denied)
+  Reading package lists... Done
+  Building dependency tree
+  Reading state information... Done
+  Some packages could not be installed. This may mean that you have
+  requested an impossible situation or if you are using the unstable
+  distribution that some required packages have not yet been created
+  or been moved out of Incoming.
+  The following information may help to resolve the situation:
+
+  The following packages have unmet dependencies:
+   vyos-1x : Depends: accel-ppp but it is not installable
+  E: Unable to correct problems, you have held broken packages.
+
+Now it's time to fix the package mirror and rerun the last step until the
+package installation succeeds again!
+
 .. _build_custom_packages:
 
 Linux Kernel
 ============
 
-The Linux Kernel used by VyOS is heavily tied to the ISO build process. The
-file ``data/defaults.json`` hosts a JSON definition if the Kernel version used
-``kernel_version`` and the ``kernel_flavor`` of the Kernel which represents the
-Kernels LOCAL_VERSION. Both together form the Kernel Version variable in the
+The Linux kernel used by VyOS is heavily tied to the ISO build process. The
+file ``data/defaults.json`` hosts a JSON definition of the kernel version used
+``kernel_version`` and the ``kernel_flavor`` of the kernel which represents the
+kernel's LOCAL_VERSION. Both together form the kernel version variable in the
 system:
 
 .. code-block:: none
@@ -272,16 +367,16 @@ system:
   4.19.146-amd64-vyos
 
 Other packages (e.g. vyos-1x) add dependencies to the ISO build procedure on
-e.g. the wireguard-modules package which itself adds a dependency on the Kernel
+e.g. the wireguard-modules package which itself adds a dependency on the kernel
 version used due to the module it ships. This may change (for WireGuard) in
-future Kernel releases but as long as we have out-of-tree modules.
+future kernel releases but as long as we have out-of-tree modules.
 
 * WireGuard
 * Accel-PPP
 * Intel NIC drivers
 * Inter QAT
 
-Each of those modules holds a dependency on the Kernel Version and if you are
+Each of those modules holds a dependency on the kernel version and if you are
 lucky enough to receive an ISO build error which sounds like:
 
 .. code-block:: none
@@ -301,28 +396,28 @@ lucky enough to receive an ISO build error which sounds like:
 
 The most obvious reasons could be:
 
-* ``vyos-build`` repo is outdate, please ``git pull`` to update to the latest
-  release Kernel version from us.
+* ``vyos-build`` repo is outdated, please ``git pull`` to update to the latest
+  release kernel version from us.
 
-* You have your own custom Kernel `*.deb` packages in the `packages` folder but
-  missed to create all required out-of tree modules like Accel-PPP, WireGuard,
-  Intel QAT, Intel NIC
+* You have your own custom kernel `*.deb` packages in the `packages` folder but
+  neglected to create all required out-of tree modules like Accel-PPP,
+  WireGuard, Intel QAT, Intel NIC
 
 Building The Kernel
 -------------------
 
-The Kernel build is quiet easy, most of the required steps can be found in the
+The kernel build is quite easy, most of the required steps can be found in the
 ``vyos-build/packages/linux-kernel/Jenkinsfile`` but we will walk you through
 it.
 
-Clone the Kernel source to `vyos-build/packages/linux-kernel/`:
+Clone the kernel source to `vyos-build/packages/linux-kernel/`:
 
 .. code-block:: none
 
   $ cd vyos-build/packages/linux-kernel/
   $ git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
 
-Checkout the required Kernel version - see ``vyos-build/data/defaults.json``
+Check out the required kernel version - see ``vyos-build/data/defaults.json``
 file (example uses kernel 4.19.146):
 
 .. code-block:: none
@@ -343,12 +438,15 @@ file (example uses kernel 4.19.146):
 
   HEAD is now at 015e94d0e37b Linux 4.19.146
 
-Now we can use the helper script ``build-kernel.sh`` which does all the necessary
-Voodoo by applying required patches from the `vyos-build/packages/linux-kernel/
-patches` folder, copying our Kernel configuration ``x86_64_vyos_defconfig`` to
-the right location, and finally building the Debian packages.
+Now we can use the helper script ``build-kernel.sh`` which does all the
+necessary voodoo by applying required patches from the
+`vyos-build/packages/linux-kernel/patches` folder, copying our kernel
+configuration ``x86_64_vyos_defconfig`` to the right location, and finally
+building the Debian packages.
 
-.. note:: Building the kernel will take some time depending on the speed and quantity of your CPU/cores and disk speed.  Plan on 20 minutes (or even longer) on lower end hardware.
+.. note:: Building the kernel will take some time depending on the speed and
+   quantity of your CPU/cores and disk speed. Expect 20 minutes
+   (or even longer) on lower end hardware.
 
 .. code-block:: none
 
@@ -425,9 +523,10 @@ the right location, and finally building the Debian packages.
   dpkg-buildpackage: info: binary-only upload (no source included)
 
 
-In the end you will be presented with the Kernel binary packages which you can
+In the end you will be presented with the kernel binary packages which you can
 then use in your custom ISO build process, by placing all the `*.deb` files in
-the vyos-build/packages folder where they will be used automatically when building VyOS as documented above.
+the vyos-build/packages folder where they will be used automatically when
+building VyOS as documented above.
 
 Firmware
 ^^^^^^^^
@@ -454,16 +553,16 @@ were built. If it fails to find the correct files you can add them manually to
 Building Out-Of-Tree Modules
 ----------------------------
 
-Building the Kernel is one part, but now you also need to build the required
+Building the kernel is one part, but now you also need to build the required
 out-of-tree modules so everything is lined up and the ABIs match. To do so,
 you can again take a look at ``vyos-build/packages/linux-kernel/Jenkinsfile``
-to see all of the required modules and their selected version. We will show you
-once how to build all the current required modules.
+to see all of the required modules and their selected versions. We will show
+you how to build all the current required modules.
 
 WireGuard
 ^^^^^^^^^
 
-First clone the source code and checkout the appropriate version by running:
+First, clone the source code and check out the appropriate version by running:
 
 .. code-block:: none
 
@@ -511,7 +610,7 @@ to the ``vyos-build/packages`` folder for inclusion during the ISO build.
 Accel-PPP
 ^^^^^^^^^
 
-First clone the source code and checkout the appropriate version by running:
+First, clone the source code and check out the appropriate version by running:
 
 .. code-block:: none
 
@@ -581,8 +680,8 @@ to the ``vyos-build/packages`` folder for inclusion during the ISO build.
 Intel QAT
 ^^^^^^^^^
 The Intel QAT (Quick Assist Technology) drivers do not come from a Git
-repository, instead we just fetch the tarballs from 01.org, Intels Open-Source
-website.
+repository, instead we just fetch the tarballs from 01.org, Intel's
+open-source website.
 
 Simply use our wrapper script to build all of the driver modules.
 
@@ -621,7 +720,7 @@ If you are brave enough to build yourself an ISO image containing any modified
 package from our GitHub organisation - this is the place to be.
 
 Any "modified" package may refer to an altered version of e.g. vyos-1x package
-that you would like to test before filing a PullRequest on GitHub.
+that you would like to test before filing a pull request on GitHub.
 
 Building an ISO with any customized package is in no way different then
 building a regular (customized or not) ISO image. Simply place your modified
@@ -632,9 +731,11 @@ Troubleshooting
 ===============
 
 Debian APT is not very verbose when it comes to errors. If your ISO build breaks
-for whatever reason and you supect its a problem with APT dependencies or
+for whatever reason and you suspect it's a problem with APT dependencies or
 installation you can add this small patch which increases the APT verbosity
 during ISO build.
+
+.. stop_vyoslinter
 
 .. code-block:: diff
 
@@ -652,6 +753,9 @@ during ISO build.
            --apt-indices false
            "${@}"
    """
+
+.. start_vyoslinter
+
 
 
 Virtualization Platforms
@@ -681,9 +785,9 @@ Run following command after building the QEMU image.
 Packages
 ********
 
-VyOS itself comes with a bunch of packages which are specific to our system and
-thus can not be found in any Debian mirrror. Those packages can be found at the
-`VyOS GitHub project`_ in their source format can can easily be compiled into
+VyOS itself comes with a bunch of packages that are specific to our system and
+thus cannot be found in any Debian mirror. Those packages can be found at the
+`VyOS GitHub project`_ in their source format can easily be compiled into
 a custom Debian (`*.deb`) package.
 
 The easiest way to compile your package is with the above mentioned
@@ -713,8 +817,8 @@ Launch Docker container and build package
   # Build DEB
   $ dpkg-buildpackage -uc -us -tc -b
 
-After a minute or two you will find the generated DEB packages next to the vyos-1x
-source directory:
+After a minute or two you will find the generated DEB packages next to the
+vyos-1x source directory:
 
 .. code-block:: none
 
@@ -749,8 +853,14 @@ information.
    the source directories and built deb packages) if you want to build an iso
    from purely upstream packages.
 
+
+.. stop_vyoslinter
+
 .. _Docker: https://www.docker.com
 .. _`Docker as non-root`: https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user
 .. _VyOS DockerHub organisation: https://hub.docker.com/u/vyos
 .. _repository: https://github.com/vyos/vyos-build
 .. _VyOS GitHub project: https://github.com/vyos
+
+.. start_vyoslinter
+

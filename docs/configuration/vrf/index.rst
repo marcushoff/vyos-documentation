@@ -1,3 +1,5 @@
+:lastproofread:2021-07-07
+
 .. _vrf:
 
 ###
@@ -10,11 +12,6 @@ VRFs, VRF-lite to be specific) in the Linux network stack. One use case is the
 multi-tenancy problem where each tenant has their own unique routing tables and
 in the very least need different default gateways.
 
-.. warning:: VRFs are an "needs testing" feature. If you think things should be
-   different then they are implemented and handled right now - please feedback
-   via a task created in Phabricator_.
-
-
 Configuration
 =============
 
@@ -23,12 +20,12 @@ then enslaved to a VRF device.
 
 .. cfgcmd:: set vrf name <name>
 
-   Create new VRF instance with `<name>`. The name is used when placing individual
-   interfaces into the VRF.
+   Create new VRF instance with `<name>`. The name is used when placing
+   individual interfaces into the VRF.
 
 .. cfgcmd:: set vrf name <name> table <id>
 
-   Configure use routing table `<id>` used by VRF `<name>`.
+   Configured routing table `<id>` is used by VRF `<name>`.
 
    .. note:: A routing table ID can not be modified once it is assigned. It can
       only be changed by deleting and re-adding the VRF instance.
@@ -50,171 +47,58 @@ Interfaces
 When VRFs are used it is not only mandatory to create a VRF but also the VRF
 itself needs to be assigned to an interface.
 
-.. cfgcmd:: set interfaces <dummy | ethernet | bonding | bridge | pppoe> <interface> vrf <name>
+.. cfgcmd:: set interfaces <dummy | ethernet | bonding | bridge | pppoe>
+   <interface> vrf <name>
 
    Assign interface identified by `<interface>` to VRF named `<name>`.
 
 Routing
 -------
 
-Static
-^^^^^^
+.. note:: VyOS 1.4 (sagitta) introduced dynamic routing support for VRFs.
 
-Static routes are manually configured routes, which, in general, cannot be
-updated dynamically from information VyOS learns about the network topology from
-other routing protocols. However, if a link fails, the router will remove
-routes, including static routes, from the :abbr:`RIPB (Routing Information
-Base)` that used this interface to reach the next hop. In general, static
-routes should only be used for very simple network topologies, or to override
-the behavior of a dynamic routing protocol for a small number of routes. The
-collection of all routes the router has learned from its configuration or from
-its dynamic routing protocols is stored in the RIB. Unicast routes are directly
-used to determine the forwarding table used for unicast packet forwarding.
+Currently dynamic routing is supported for the following protocols:
 
-Static Routes
-"""""""""""""
+- :ref:`routing-bgp`
+- :ref:`routing-isis`
+- :ref:`routing-ospf`
+- :ref:`routing-static`
 
-.. cfgcmd:: set protocols vrf <name> static route <subnet> next-hop <address>
+The CLI configuration is same as mentioned in above articles. The only
+difference is, that each routing protocol used, must be prefixed with the `vrf
+name <name>` command.
 
-   Configure next-hop `<address>` for an IPv4 static route in the VRF identified
-   by `<name>`. Multiple static routes can be created.
+Example
+^^^^^^^
 
-.. cfgcmd:: set protocols vrf <name> static route <subnet> next-hop <address> disable
+The following commands would be required to set options for a given dynamic
+routing protocol inside a given vrf:
 
-   Disable IPv4 static route entry in the VRF identified by `<name>`
-
-.. cfgcmd:: set protocols vrf <name> static route <subnet> next-hop <address> distance <distance>
-
-   Defines next-hop distance for this route, routes with smaller administrative
-   distance are elected prior those with a higher distance.
-
-   Range is 1 to 255, default is 1.
-
-.. cfgcmd:: set protocols vrf <name> static route6 <subnet> next-hop <address>
-
-   Configure next-hop `<address>` for an IPv6 static route in the VRF identified
-   by `<name>`. Multiple IPv6 static routes can be created.
-
-.. cfgcmd:: set protocols vrf <name> static route6 <subnet> next-hop <address> disable
-
-   Disable IPv6 static route entry in the VRF identified by `<name>`.
-
-.. cfgcmd:: set protocols vrf <name> static route6 <subnet> next-hop <address> distance <distance>
-
-   Defines next-hop distance for this route, routes with smaller administrative
-   distance are elected prior those with a higher distance.
-
-   Range is 1 to 255, default is 1.
-
-   .. note:: Routes with a distance of 255 are effectively disabled and not
-      installed into the kernel.
-
-
-Leaking
-"""""""
-
-.. cfgcmd:: set protocols vrf <name> static route <subnet> next-hop <address> next-hop-vrf <default | vrf-name>
-
-   Use this command if you have shared services or routes that should be shared
-   between multiple VRF instances. This will add an IPv4 route to VRF `<name>`
-   routing table to reach a `<subnet>` via a next-hop gatewys `<address>` in
-   a different VRF or leak it into the default VRF.
-
-.. cfgcmd:: set protocols vrf <name> static route6 <subnet> next-hop <address> next-hop-vrf <default | vrf-name>
-
-   Use this command if you have shared services or routes that should be shared
-   between multiple VRF instances. This will add an IPv6 route to VRF `<name>`
-   routing table to reach a `<subnet>` via a next-hop gatewys `<address>` in
-   a different VRF or leak it into the default VRF.
-
-
-Interface Routes
-""""""""""""""""
-
-.. cfgcmd:: set protocols vrf <name> static interface-route <subnet> next-hop-interface <interface>
-
-   Allows you to configure the next-hop interface for an interface-based IPv4
-   static route. `<interface>` will be the next-hop interface where trafic is
-   routed for the given `<subnet>`.
-
-.. cfgcmd:: set protocols vrf <name> static interface-route <subnet> next-hop-interface <interface> disable
-
-   Disables interface-based IPv4 static route.
-
-.. cfgcmd:: set protocols vrf <name> static interface-route <subnet> next-hop-interface <interface> distance <distance>
-
-   Defines next-hop distance for this route, routes with smaller administrative
-   distance are elected prior those with a higher distance.
-
-   Range is 1 to 255, default is 1.
-
-.. cfgcmd:: set protocols vrf <name> static interface-route6 <subnet> next-hop-interface <interface>
-
-   Allows you to configure the next-hop interface for an interface-based IPv6
-   static route. `<interface>` will be the next-hop interface where trafic is
-   routed for the given `<subnet>`.
-
-.. cfgcmd:: set protocols vrf <name> static interface-route6 <subnet> next-hop-interface <interface> disable
-
-   Disables interface-based IPv6 static route.
-
-.. cfgcmd:: set protocols vrf <name> static interface-route6 <subnet> next-hop-interface <interface> distance <distance>
-
-   Defines next-hop distance for this route, routes with smaller administrative
-   distance are elected prior those with a higher distance.
-
-   Range is 1 to 255, default is 1.
-
-Blackhole
-"""""""""
-
-.. cfgcmd:: set protocols vrf <name> static route <subnet> blackhole
-
-   Use this command to configure a "black-hole" route on the router. A
-   black-hole route is a route for which the system silently discard packets
-   that are matched. This prevents networks leaking out public interfaces, but
-   it does not prevent them from being used as a more specific route inside your
-   network.
-
-.. cfgcmd:: set protocols vrf <name> static route <subnet> blackhole distance <distance>
-
-   Defines blackhole distance for this route, routes with smaller administrative
-   distance are elected prior those with a higher distance.
-
-.. cfgcmd:: set protocols vrf <name> static route6 <subnet> blackhole
-
-   Use this command to configure a "black-hole" route on the router. A
-   black-hole route is a route for which the system silently discard packets
-   that are matched. This prevents networks leaking out public interfaces, but
-   it does not prevent them from being used as a more specific route inside your
-   network.
-
-.. cfgcmd:: set protocols vrf <name> static route6 <subnet> blackhole distance <distance>
-
-   Defines blackhole distance for this route, routes with smaller administrative
-   distance are elected prior those with a higher distance.
-
+- :ref:`routing-bgp`: ``set vrf name <name> protocols bgp ...``
+- :ref:`routing-isis`: ``set vrf name <name> protocols isis ...``
+- :ref:`routing-ospf`: ``set vrf name <name> protocols ospf ...``
+- :ref:`routing-static`: ``set vrf name <name> protocols static ...``
 
 Operation
 =========
 
 It is not sufficient to only configure a VRF but VRFs must be maintained, too.
-For VR Fmaintenance the followin operational commands are in place.
+For VRF maintenance the following operational commands are in place.
 
 .. opcmd:: show vrf
 
-   List VRFs that have been created
+   Lists VRFs that have been created
 
    .. code-block:: none
 
      vyos@vyos:~$ show vrf
      VRF name          state     mac address        flags                     interfaces
      --------          -----     -----------        -----                     ----------
-     blue              up        de:c4:83:d8:74:24  noarp,master,up,lower_up  dum200,eth0.302
-     red               up        be:36:ce:02:df:aa  noarp,master,up,lower_up  dum100,eth0.300,bond0.100,peth0
+     blue              up        00:53:12:d8:74:24  noarp,master,up,lower_up  dum200,eth0.302
+     red               up        00:53:de:02:df:aa  noarp,master,up,lower_up  dum100,eth0.300,bond0.100,peth0
 
-   .. note:: Command should probably be extended to list also the real interfaces
-      assigned to this one VRF to get a better overview.
+   .. note:: Command should probably be extended to list also the real
+      interfaces assigned to this one VRF to get a better overview.
 
 .. opcmd:: show vrf <name>
 
@@ -223,7 +107,7 @@ For VR Fmaintenance the followin operational commands are in place.
      vyos@vyos:~$ show vrf name blue
      VRF name          state     mac address        flags                     interfaces
      --------          -----     -----------        -----                     ----------
-     blue              up        de:c4:83:d8:74:24  noarp,master,up,lower_up  dum200,eth0.302
+     blue              up        00:53:12:d8:74:24  noarp,master,up,lower_up  dum200,eth0.302
 
 .. opcmd:: show ip route vrf <name>
 
@@ -273,10 +157,10 @@ For VR Fmaintenance the followin operational commands are in place.
    will have an IP and ICMP header, followed by "struct timeval" and an
    arbitrary number of pad bytes used to fill out the packet.
 
-   When doing fault isolation with ping, your should first run it on the local
+   When doing fault isolation with ping, you should first run it on the local
    host, to verify that the local network interface is up and running. Then,
    continue with hosts and gateways further down the road towards your
-   destination. Round-trip times and packet loss statistics are computed.
+   destination. Round-trip time and packet loss statistics are computed.
 
    Duplicate packets are not included in the packet loss calculation, although
    the round-trip time of these packets is used in calculating the minimum/
@@ -298,10 +182,134 @@ For VR Fmaintenance the followin operational commands are in place.
 
 .. opcmd:: traceroute vrf <name> [ipv4 | ipv6] <host>
 
-   Displays the route packets take to a network host utilizing VRF instance
-   identified by `<name>`. When using the IPv4 or IPv6 option, display the route
-   packets take to the for the given hosts IP address family. This option is
-   useful when the host specified is a hostname rather than an IP address.
+   Displays the route packets taken to a network host utilizing VRF instance
+   identified by `<name>`. When using the IPv4 or IPv6 option, displays the
+   route packets taken to the given hosts IP address family. This option is
+   useful when the host is specified as a hostname rather than an IP address.
+
+Example
+=======
+
+VRF route leaking
+-----------------
+
+The following example topology was build using EVE-NG.
+
+.. figure:: /_static/images/vrf-example-topology-01.png
+   :alt: VRF topology example
+
+   VRF route leaking
+
+* PC1 is in the ``default`` VRF and acting as e.g. a "fileserver"
+* PC2 is in VRF ``blue`` which is the development department
+* PC3 and PC4 are connected to a bridge device on router ``R1`` which is in VRF
+  ``red``. Say this is the HR department.
+* R1 is managed through an out-of-band network that resides in VRF ``mgmt``
+
+Configuration
+^^^^^^^^^^^^^
+
+  .. code-block:: none
+
+    set interfaces bridge br10 address '10.30.0.254/24'
+    set interfaces bridge br10 member interface eth3
+    set interfaces bridge br10 member interface eth4
+    set interfaces bridge br10 vrf 'red'
+
+    set interfaces ethernet eth0 address 'dhcp'
+    set interfaces ethernet eth0 vrf 'mgmt'
+    set interfaces ethernet eth1 address '10.0.0.254/24'
+    set interfaces ethernet eth2 address '10.20.0.254/24'
+    set interfaces ethernet eth2 vrf 'blue'
+
+    set protocols static route 10.20.0.0/24 interface eth2 vrf 'blue'
+    set protocols static route 10.30.0.0/24 interface br10 vrf 'red'
+
+    set service ssh disable-host-validation
+    set service ssh vrf 'mgmt'
+
+    set system name-servers-dhcp 'eth0'
+
+    set vrf name blue protocols static route 10.0.0.0/24 interface eth1 vrf 'default'
+    set vrf name blue table '3000'
+    set vrf name mgmt table '1000'
+    set vrf name red protocols static route 10.0.0.0/24 interface eth1 vrf 'default'
+    set vrf name red table '2000'
+
+Operation
+^^^^^^^^^
+
+After committing the configuration we can verify all leaked routes are installed,
+and try to ICMP ping PC1 from PC3.
+
+  .. code-block:: none
+
+    PCS> ping 10.0.0.1
+
+    84 bytes from 10.0.0.1 icmp_seq=1 ttl=63 time=1.943 ms
+    84 bytes from 10.0.0.1 icmp_seq=2 ttl=63 time=1.618 ms
+    84 bytes from 10.0.0.1 icmp_seq=3 ttl=63 time=1.745 ms
+
+  .. code-block:: none
+
+    VPCS> show ip
+
+    NAME        : VPCS[1]
+    IP/MASK     : 10.30.0.1/24
+    GATEWAY     : 10.30.0.254
+    DNS         :
+    MAC         : 00:50:79:66:68:0f
+
+VRF default routing table
+"""""""""""""""""""""""""
+
+  .. code-block:: none
+
+    vyos@R1:~$ show ip route
+    Codes: K - kernel route, C - connected, S - static, R - RIP,
+           O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+           T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+           F - PBR, f - OpenFabric,
+           > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+
+    C>* 10.0.0.0/24 is directly connected, eth1, 00:07:44
+    S>* 10.20.0.0/24 [1/0] is directly connected, eth2 (vrf blue), weight 1, 00:07:38
+    S>* 10.30.0.0/24 [1/0] is directly connected, br10 (vrf red), weight 1, 00:07:38
+
+VRF red routing table
+"""""""""""""""""""""
+
+  .. code-block:: none
+
+    vyos@R1:~$ show ip route vrf red
+    Codes: K - kernel route, C - connected, S - static, R - RIP,
+           O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+           T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+           F - PBR, f - OpenFabric,
+           > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+
+    VRF red:
+    K>* 0.0.0.0/0 [255/8192] unreachable (ICMP unreachable), 00:07:57
+    S>* 10.0.0.0/24 [1/0] is directly connected, eth1 (vrf default), weight 1, 00:07:40
+    C>* 10.30.0.0/24 is directly connected, br10, 00:07:54
+
+VRF blue routing table
+""""""""""""""""""""""
+
+  .. code-block:: none
+
+    vyos@R1:~$ show ip route vrf blue
+    Codes: K - kernel route, C - connected, S - static, R - RIP,
+           O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+           T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+           F - PBR, f - OpenFabric,
+           > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+
+    VRF blue:
+    K>* 0.0.0.0/0 [255/8192] unreachable (ICMP unreachable), 00:08:00
+    S>* 10.0.0.0/24 [1/0] is directly connected, eth1 (vrf default), weight 1, 00:07:44
+    C>* 10.20.0.0/24 is directly connected, eth2, 00:07:53
+
 
 
 .. include:: /_include/common-references.txt

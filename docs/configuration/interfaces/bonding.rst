@@ -1,3 +1,5 @@
+:lastproofread: 2021-06-30
+
 .. _bond-interface:
 
 #######################
@@ -47,7 +49,7 @@ Bond options
      the :cfgcmd:`hash-policy` option, documented below.
 
      .. note:: Not all transmit policies may be 802.3ad compliant, particularly
-        in regards to the packet mis-ordering requirements of section 43.2.4
+        in regards to the packet misordering requirements of section 43.2.4
         of the 802.3ad standard.
 
    * ``active-backup`` - Active-backup policy: Only one slave in the bond is
@@ -133,13 +135,26 @@ Bond options
 
    This option only affects 802.3ad mode.
 
-   The default value is 0. This will cause carrier to be asserted (for 802.3ad
-   mode) whenever there is an active aggregator, regardless of the number of
-   available links in that aggregator.
+   The default value is 0. This will cause the carrier to be asserted
+   (for 802.3ad mode) whenever there is an active aggregator,
+   regardless of the number of available links in that aggregator.
 
    .. note:: Because an aggregator cannot be active without at least one
       available link, setting this option to 0 or to 1 has the exact same
       effect.
+
+.. cfgcmd:: set interfaces bonding <interface> lacp-rate <slow|fast>
+
+   Option specifying the rate in which we'll ask our link partner to transmit
+   LACPDU packets in 802.3ad mode.
+
+   This option only affects 802.3ad mode.
+
+   * slow: Request partner to transmit LACPDUs every 30 seconds
+
+   * fast: Request partner to transmit LACPDUs every 1 second
+
+   The default value is slow.
 
 .. cfgcmd:: set interfaces bonding <interface> hash-policy <policy>
 
@@ -209,7 +224,7 @@ Bond options
      This algorithm is not fully 802.3ad compliant. A single TCP or UDP
      conversation containing both fragmented and unfragmented packets will see
      packets striped across two interfaces. This may result in out of order
-     delivery. Most traffic types will not meet this criteria, as TCP rarely
+     delivery. Most traffic types will not meet these criteria, as TCP rarely
      fragments traffic, and most UDP traffic is not involved in extended
      conversations. Other implementations of 802.3ad may or may not tolerate
      this noncompliance.
@@ -254,7 +269,14 @@ Bond options
    be given for ARP monitoring to function.
 
    The maximum number of targets that can be specified is 16. The default value
-   is no IP addresses.
+   is no IP address.
+
+Offloading
+----------
+
+.. cmdinclude:: /_include/interface-xdp.txt
+   :var0: bonding
+   :var1: bond0
 
 VLAN
 ====
@@ -262,6 +284,14 @@ VLAN
 .. cmdinclude:: /_include/interface-vlan-8021q.txt
    :var0: bond
    :var1: bond0
+
+Port Mirror (SPAN)
+==================
+
+.. cmdinclude:: ../../_include/interface-mirror.txt
+   :var0: bonding
+   :var1: bond1
+   :var2: eth3
 
 *******
 Example
@@ -347,8 +377,8 @@ interfaces from VyOS to a Juniper EX Switch system.
 Aruba/HP
 ========
 
-For a headstart you can use the below example on how to build a bond,port-channel
-with two interfaces from VyOS to a Aruba/HP 2510G switch.
+For a headstart you can use the below example on how to build a
+bond,port-channel with two interfaces from VyOS to a Aruba/HP 2510G switch.
 
 .. code-block:: none
 
@@ -470,9 +500,9 @@ Lets assume the following topology:
      !
 
 .. note:: When using EVE-NG to lab this environment ensure you are using e1000
-   as the desired driver for your VyOS network interfaces. When using the regular
-   virtio network driver no LACP PDUs will be sent by VyOS thus the port-channel
-   will never become active!
+   as the desired driver for your VyOS network interfaces. When using the
+   regular virtio network driver no LACP PDUs will be sent by VyOS thus the
+   port-channel will never become active!
 
 *********
 Operation

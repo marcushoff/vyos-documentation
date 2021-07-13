@@ -1,24 +1,26 @@
+:lastproofread: 2021-06-28
+
 #############################
 High Availability Walkthrough
 #############################
 
 This document walks you through a complete HA setup of two VyOS machines. This
-design is based on a VM as the primary router, and a physical machine as a
-backup, using VRRP, BGP, OSPF and conntrack sharing.
+design is based on a VM as the primary router and a physical machine as a
+backup, using VRRP, BGP, OSPF, and conntrack sharing.
 
-The aim of this document is to walk you through setting everything up so you
-and up at a point where you can reboot any machine and not lose more than a few
+This document aims to walk you through setting everything up, so
+at a point where you can reboot any machine and not lose more than a few
 seconds worth of connectivity.
 
 Design
 ======
 
-This is based on a real life, in production design. One of the complex issues
+This is based on a real-life production design. One of the complex issues
 is ensuring you have redundant data INTO your network. We do this with a pair
-of Cisco Nexus switches, and using Virtual PortChannels that are spanned across
-them. This as an added bonus, also allows for complete switch failure without
-an outage. How you achieve this yourself is left as an exercise to the reader
-but our setup is documented here.
+of Cisco Nexus switches and using Virtual PortChannels that are spanned across
+them. As a bonus, this also allows for complete switch failure without
+an outage. How you achieve this yourself is left as an exercise to the reader.
+But our setup is documented here.
 
 Walkthrough suggestion
 ----------------------
@@ -31,7 +33,7 @@ If you are following through this document, it is strongly suggested you
 complete the entire document, ONLY doing the virtual router1 steps, and then
 come back and walk through it AGAIN on the backup hardware router.
 
-This ensures you don't go to fast, or miss a step. However, it will make your
+This ensures you don't go too fast or miss a step. However, it will make your
 life easier to configure the fixed IP address and default route now on the
 hardware router.
 
@@ -43,7 +45,7 @@ provider, which we are publishing on VLAN100.
 
 They want us to establish a BGP session to their routers on 192.0.2.11 and
 192.0.2.12 from our routers 192.0.2.21 and 192.0.2.22. They are AS 65550 and
-we are AS65551.
+we are AS 65551.
 
 Our routers are going to have a floating IP address of 203.0.113.1, and use
 .2 and .3 as their fixed IPs.
@@ -54,13 +56,13 @@ When traffic is originated from the 10.200.201.0/24 network, it will be
 masqueraded to 203.0.113.1
 
 For connection between sites, we are running a WireGuard link to two REMOTE
-routers, and using OSPF over those links to distribute routes. That remote
+routers and using OSPF over those links to distribute routes. That remote
 site is expected to send traffic from anything in 10.201.0.0/16
 
 VLANs
 -----
 
-These are the vlans we wll be using:
+These are the vlans we will be using:
 
 * 50: Upstream, using the 192.0.2.0/24 network allocated by them.
 * 100: 'Public' network, using our 203.0.113.0/24 network.
@@ -95,7 +97,7 @@ of scope of this.
 
 .. note:: Our implementation uses VMware's Distributed Port Groups, which allows
   VMware to use LACP. This is a part of the ENTERPRISE licence, and is not
-  available on a Free licence. If you are implementing this and do not have
+  available on a free licence. If you are implementing this and do not have
   access to DPGs, you should not use VMware, and use some other virtualization
   platform instead.
 
@@ -103,7 +105,7 @@ of scope of this.
 Basic Setup (via console)
 =========================
 
-Create your router1 VM so it is able to withstand a VM Host failing, or a
+Create your router1 VM. So it can withstand a VM Host failing or a
 network link failing. Using VMware, this is achieved by enabling vSphere DRS,
 vSphere Availability, and creating a Distributed Port Group that uses LACP.
 
@@ -177,7 +179,7 @@ Enable SSH so you can now SSH into the routers, rather than using the console.
    commit
    save
 
-At this point you should be able to SSH into both of them, and will no longer
+At this point, you should be able to SSH into both of them, and will no longer
 need access to the console (unless you break something!)
 
 
@@ -332,6 +334,8 @@ hardware router.
    set service conntrack-sync mcast-group '224.0.0.50'
    set service conntrack-sync sync-queue-size '8'
 
+.. _ha:contracktesting:
+
 Testing
 -------
 
@@ -370,19 +374,19 @@ Replace the 203.0.113.3 with whatever the other router's IP address is.
 
    set interfaces wireguard wg01 address '10.254.60.1/30'
    set interfaces wireguard wg01 description 'router1-to-offsite1'
-   set interfaces wireguard wg01 ip ospf authentication md5 key-id 1 md5-key 'i360KoCwUGZvPq7e'
-   set interfaces wireguard wg01 ip ospf cost '11'
-   set interfaces wireguard wg01 ip ospf dead-interval '5'
-   set interfaces wireguard wg01 ip ospf hello-interval '1'
-   set interfaces wireguard wg01 ip ospf network 'point-to-point'
-   set interfaces wireguard wg01 ip ospf priority '1'
-   set interfaces wireguard wg01 ip ospf retransmit-interval '5'
-   set interfaces wireguard wg01 ip ospf transmit-delay '1'
    set interfaces wireguard wg01 peer OFFSITE1 allowed-ips '0.0.0.0/0'
    set interfaces wireguard wg01 peer OFFSITE1 endpoint '203.0.113.3:50001'
    set interfaces wireguard wg01 peer OFFSITE1 persistent-keepalive '15'
    set interfaces wireguard wg01 peer OFFSITE1 pubkey 'GEFMOWzAyau42/HwdwfXnrfHdIISQF8YHj35rOgSZ0o='
    set interfaces wireguard wg01 port '50001'
+   set protocols ospf interface wg01 authentication md5 key-id 1 md5-key 'i360KoCwUGZvPq7e'
+   set protocols ospf interface wg01 cost '11'
+   set protocols ospf interface wg01 dead-interval '5'
+   set protocols ospf interface wg01 hello-interval '1'
+   set protocols ospf interface wg01 network 'point-to-point'
+   set protocols ospf interface wg01 priority '1'
+   set protocols ospf interface wg01 retransmit-interval '5'
+   set protocols ospf interface wg01 transmit-delay '1'
 
 
 **offsite1**
@@ -393,19 +397,19 @@ This is connecting back to the STATIC IP of router1, not the floating.
 
    set interfaces wireguard wg01 address '10.254.60.2/30'
    set interfaces wireguard wg01 description 'offsite1-to-router1'
-   set interfaces wireguard wg01 ip ospf authentication md5 key-id 1 md5-key 'i360KoCwUGZvPq7e'
-   set interfaces wireguard wg01 ip ospf cost '11'
-   set interfaces wireguard wg01 ip ospf dead-interval '5'
-   set interfaces wireguard wg01 ip ospf hello-interval '1'
-   set interfaces wireguard wg01 ip ospf network 'point-to-point'
-   set interfaces wireguard wg01 ip ospf priority '1'
-   set interfaces wireguard wg01 ip ospf retransmit-interval '5'
-   set interfaces wireguard wg01 ip ospf transmit-delay '1'
    set interfaces wireguard wg01 peer ROUTER1 allowed-ips '0.0.0.0/0'
    set interfaces wireguard wg01 peer ROUTER1 endpoint '192.0.2.21:50001'
    set interfaces wireguard wg01 peer ROUTER1 persistent-keepalive '15'
    set interfaces wireguard wg01 peer ROUTER1 pubkey 'CKwMV3ZaLntMule2Kd3G7UyVBR7zE8/qoZgLb82EE2Q='
    set interfaces wireguard wg01 port '50001'
+   set protocols ospf interface wg01 authentication md5 key-id 1 md5-key 'i360KoCwUGZvPq7e'
+   set protocols ospf interface wg01 cost '11'
+   set protocols ospf interface wg01 dead-interval '5'
+   set protocols ospf interface wg01 hello-interval '1'
+   set protocols ospf interface wg01 network 'point-to-point'
+   set protocols ospf interface wg01 priority '1'
+   set protocols ospf interface wg01 retransmit-interval '5'
+   set protocols ospf interface wg01 transmit-delay '1'
 
 Test WireGuard
 --------------
@@ -415,9 +419,9 @@ Make sure you can ping 10.254.60.1 and .2 from both routers.
 Create Export Filter
 --------------------
 
-We only want to export the networks we know we should be exporting. Always
-whitelist your route filters, both importing and exporting. A good rule of
-thumb is **'If you are not the default router for a network, don't advertise
+We only want to export the networks we know. Always do a whitelist on your route
+filters, both importing and exporting. A good rule of thumb is
+**'If you are not the default router for a network, don't advertise
 it'**. This means we explicitly do not want to advertise the 192.0.2.0/24
 network (but do want to advertise 10.200.201.0 and 203.0.113.0, which we ARE
 the default route for). This filter is applied to ``redistribute connected``.
@@ -446,7 +450,7 @@ default again. This is called 'flapping'.
 Create Import Filter
 --------------------
 
-We only want to import networks we know about. Our OSPF peer should only be
+We only want to import networks we know. Our OSPF peer should only be
 advertising networks in the 10.201.0.0/16 range. Note that this is an INVERSE
 MATCH. You deny in access-list 100 to accept the route.
 
@@ -489,7 +493,7 @@ Test OSPF
 
 When you have enabled OSPF on both routers, you should be able to see each
 other with the command ``show ip ospf neighbour``. The state must be 'Full'
-or '2-Way', if it is not then there is a network connectivity issue between the
+or '2-Way'. If it is not, then there is a network connectivity issue between the
 hosts. This is often caused by NAT or MTU issues. You should not see any new
 routes (unless this is the second pass) in the output of ``show ip route``
 
@@ -512,8 +516,8 @@ You should now be able to see the advertised network on the other host.
 Duplicate configuration
 -----------------------
 
-At this pont you now need to create the X link between all four routers. Use a
-different /30 for each link.
+At this point, you now need to create the X link between all four routers.
+Use amdifferent /30 for each link.
 
 Priorities
 ----------
@@ -523,8 +527,8 @@ be used unless the primary links are down.
 
 .. code-block:: none
 
-   set interfaces wireguard wg01 ip ospf cost '10'
-   set interfaces wireguard wg02 ip ospf cost '200'
+   set protocols ospf interface wg01 cost '10'
+   set protocols ospf interface wg01 cost '200'
 
 
 This will be visible in 'show ip route'.
@@ -555,6 +559,7 @@ it is not 203.0.113.0/24.
    set policy prefix-list BGPOUT rule 100 prefix '203.0.113.0/24'
    set policy prefix-list BGPOUT rule 10000 action 'deny'
    set policy prefix-list BGPOUT rule 10000 prefix '0.0.0.0/0'
+
    set policy route-map BGPOUT description 'BGP Export Filter'
    set policy route-map BGPOUT rule 10 action 'permit'
    set policy route-map BGPOUT rule 10 match ip address prefix-list 'BGPOUT'
@@ -564,14 +569,16 @@ it is not 203.0.113.0/24.
    set policy route-map BGPPREPENDOUT rule 10 set as-path-prepend '65551 65551 65551'
    set policy route-map BGPPREPENDOUT rule 10 match ip address prefix-list 'BGPOUT'
    set policy route-map BGPPREPENDOUT rule 10000 action 'deny'
-   set protocols bgp 65551 address-family ipv4-unicast network 192.0.2.0/24
-   set protocols bgp 65551 address-family ipv4-unicast redistribute connected metric '50'
-   set protocols bgp 65551 address-family ipv4-unicast redistribute ospf metric '50'
-   set protocols bgp 65551 neighbor 192.0.2.11 address-family ipv4-unicast route-map export 'BGPOUT'
-   set protocols bgp 65551 neighbor 192.0.2.11 address-family ipv4-unicast soft-reconfiguration inbound
-   set protocols bgp 65551 neighbor 192.0.2.11 remote-as '65550'
-   set protocols bgp 65551 neighbor 192.0.2.11 update-source '192.0.2.21'
-   set protocols bgp 65551 parameters router-id '192.0.2.21'
+
+   set protocols bgp local-as 65551
+   set protocols bgp address-family ipv4-unicast network 192.0.2.0/24
+   set protocols bgp address-family ipv4-unicast redistribute connected metric '50'
+   set protocols bgp address-family ipv4-unicast redistribute ospf metric '50'
+   set protocols bgp neighbor 192.0.2.11 address-family ipv4-unicast route-map export 'BGPOUT'
+   set protocols bgp neighbor 192.0.2.11 address-family ipv4-unicast soft-reconfiguration inbound
+   set protocols bgp neighbor 192.0.2.11 remote-as '65550'
+   set protocols bgp neighbor 192.0.2.11 update-source '192.0.2.21'
+   set protocols bgp parameters router-id '192.0.2.21'
 
 
 **router2**

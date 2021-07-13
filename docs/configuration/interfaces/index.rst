@@ -16,13 +16,13 @@ Interfaces
    loopback
    macsec
    openvpn
+   wireguard
    pppoe
    pseudo-ethernet
    tunnel
    vti
    vxlan
-   wireguard
    wireless
-   wirelessmodem
+   wwan
 
 

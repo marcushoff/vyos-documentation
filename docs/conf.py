@@ -22,14 +22,14 @@ from docutils.parsers.rst.roles import set_classes
 # -- Project information -----------------------------------------------------
 
 project = u'VyOS'
-copyright = u'2020, VyOS maintainers and contributors'
+copyright = u'2021, VyOS maintainers and contributors'
 author = u'VyOS maintainers and contributors'
 
 # The short X.Y version
-version = u'1.3'
+version = u'1.4'
 
 # The full version, including alpha/beta/rc tags
-release = u'1.3.x (equuleus)'
+release = u'1.4.x (sagitta)'
 
 # -- General configuration ---------------------------------------------------
 
@@ -45,11 +45,16 @@ extensions = ['sphinx.ext.intersphinx',
               'sphinx.ext.ifconfig',
               'sphinx.ext.graphviz',
               'notfound.extension',
+              'autosectionlabel',
               'vyos'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# autosectionlabel
+autosectionlabel_prefix_document = True
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:

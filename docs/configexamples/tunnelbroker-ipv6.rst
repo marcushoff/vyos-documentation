@@ -1,10 +1,14 @@
+:lastproofread: 2021-06-29
+
 .. _examples-tunnelbroker-ipv6:
+
+.. stop_vyoslinter
 
 #######################
 Tunnelbroker.net (IPv6)
 #######################
 
-This guides walks through the setup of https://www.tunnelbroker.net/ for an
+This guide walks through the setup of https://www.tunnelbroker.net/ for an
 IPv6 Tunnel.
 
 Prerequisites
@@ -29,11 +33,11 @@ tunnel information page.
   set interfaces tunnel tun0 address Client_IPv6_from_Tunnelbroker    # This will be your VyOS install's public IPv6 address
   set interfaces tunnel tun0 description 'HE.NET IPv6 Tunnel'
   set interfaces tunnel tun0 encapsulation 'sit'
-  set interfaces tunnel tun0 local-ip Client_IPv4_from_Tunnelbroker   # This is your public IP
+  set interfaces tunnel tun0 source-address Client_IPv4_from_Tunnelbroker   # This is your public IP
   set interfaces tunnel tun0 mtu '1472'
   set interfaces tunnel tun0 multicast 'disable'
-  set interfaces tunnel tun0 remote-ip Server_IPv4_from_Tunnelbroker  # This is the IP of the Tunnelbroker server
-  set protocols static interface-route6 ::/0 next-hop-interface tun0  # Tell all traffic to go over this tunnel
+  set interfaces tunnel tun0 remote Server_IPv4_from_Tunnelbroker  # This is the IP of the Tunnelbroker server
+  set protocols static route6 ::/0 interface tun0  # Tell all traffic to go over this tunnel
   commit
 
 If your WAN connection is over PPPoE, you may need to set the MTU on the above
@@ -76,12 +80,12 @@ You should now be able to ping something by IPv6 DNS name:
    2 packets transmitted, 2 received, 0% packet loss, time 1001ms
    rtt min/avg/max/mdev = 16.880/17.153/17.426/0.273 ms
 
-Assuming everything works, you can proceed to client configuration
+Assuming everything works, you can proceed to the client configuration
 
 LAN Configuration
 =================
 
-At this point your VyOS install should have full IPv6, but now your LAN devices
+At this point, your VyOS install should have full IPv6, but now your LAN devices
 need access.
 
 With Tunnelbroker.net, you have two options:
@@ -110,7 +114,9 @@ should be replaced with the information from your `Routed /64` tunnel):
   set service router-advert interface eth1 name-server '2001:4860:4860::8844'
   set service router-advert interface eth1 prefix 2001:470:xxxx:xxxx::/64 
 
-Please note, 'autonomous-flag' and 'on-link-flag' are enabled by default, 'valid-lifetime' and 'preferred-lifetime' are set to default values of 30 days and 4 hours respectively.
+Please note, 'autonomous-flag' and 'on-link-flag' are enabled by default,
+'valid-lifetime' and 'preferred-lifetime' are set to default values of
+30 days and 4 hours respectively.
 
 This accomplishes a few things:
 
@@ -136,7 +142,7 @@ The format of these addresses:
 In the above examples, 1,2,ffff are all chosen by you. You can use 1-ffff
 (1-65535).
 
-So, when your LAN is eth1, your DMZ is eth2, your cameras live on eth3, etc:
+So, when your LAN is eth1, your DMZ is eth2, your cameras are on eth3, etc:
 
 .. code-block:: none
 
@@ -155,7 +161,9 @@ So, when your LAN is eth1, your DMZ is eth2, your cameras live on eth3, etc:
   set service router-advert interface eth3 name-server '2001:4860:4860::8844'
   set service router-advert interface eth3 prefix 2001:470:xxxx:3::/64
 
-Please note, 'autonomous-flag' and 'on-link-flag' are enabled by default, 'valid-lifetime' and 'preferred-lifetime' are set to default values of 30 days and 4 hours respectively.
+Please note, 'autonomous-flag' and 'on-link-flag' are enabled by default,
+'valid-lifetime' and 'preferred-lifetime' are set to default values of
+30 days and 4 hours respectively.
 
 Firewall
 ========
@@ -167,3 +175,6 @@ NAME`.
 Similarly, to attach the firewall, you would use `set interfaces ethernet eth0
 firewall in ipv6-name` or `set zone-policy zone LOCAL from WAN firewall
 ipv6-name`.
+
+
+.. start_vyoslinter

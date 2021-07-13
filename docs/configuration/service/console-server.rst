@@ -44,7 +44,8 @@ second. This is also the default setting if none of those options are defined.
   Configure either one or two stop bits. This defaults to one stop bits if
   left unconfigured.
 
-.. cfgcmd:: set service console-server <device> speed [ 300 | 1200 | 2400 | 4800 | 9600 | 19200 | 38400 | 57600 | 115200 ]
+.. cfgcmd:: set service console-server <device> speed 
+   [ 300 | 1200 | 2400 | 4800 | 9600 | 19200 | 38400 | 57600 | 115200 ]
 
   .. note:: USB to serial converters will handle most of their work in software
      so you should be carefull with the selected baudrate as some times they
@@ -88,13 +89,13 @@ Operation
      usb0b2.4p1.0               up   vyos@localhost
 
 
-.. opcmd:: connect console-server <device>
+.. opcmd:: connect console <device>
 
   Locally connect to serial port identified by `<device>`.
 
   .. code-block:: none
 
-    vyos@vyos-r1:~$ connect console-server usb0b2.4p1.0
+    vyos@vyos-r1:~$ connect console usb0b2.4p1.0
     [Enter `^Ec?' for help]
     [-- MOTD -- VyOS Console Server]
 

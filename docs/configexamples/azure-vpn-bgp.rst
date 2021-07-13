@@ -1,3 +1,5 @@
+:lastproofread: 2021-06-28
+
 .. _examples-azure-vpn-bgp:
 
 Route-Based Site-to-Site VPN to Azure (BGP over IKEv2/IPsec)
@@ -6,7 +8,9 @@ Route-Based Site-to-Site VPN to Azure (BGP over IKEv2/IPsec)
 This guide shows an example of a route-based IKEv2 site-to-site VPN to
 Azure using VTI and BGP for dynamic routing updates.
 
-For redundant / active-active configurations see `Route-Based Redundant Site-to-Site VPN to Azure (BGP over IKEv2/IPsec) <https://docs.vyos.io/en/crux/appendix/examples/azure-vpn-dual-bgp.html>`_
+For redundant / active-active configurations see
+:ref:`examples-azure-vpn-dual-bgp`
+
 
 Prerequisites
 ^^^^^^^^^^^^^
@@ -112,19 +116,20 @@ Vyos configuration
 
 .. code-block:: none
 
-  set protocols static interface-route 10.0.0.4/32 next-hop-interface vti1
+  set protocols static route 10.0.0.4/32 interface vti1
 
 - Configure your BGP settings
 
 .. code-block:: none
 
-  set protocols bgp 64499 neighbor 10.0.0.4 remote-as '65540'
-  set protocols bgp 64499 neighbor 10.0.0.4 address-family ipv4-unicast soft-reconfiguration 'inbound'
-  set protocols bgp 64499 neighbor 10.0.0.4 timers holdtime '30'
-  set protocols bgp 64499 neighbor 10.0.0.4 timers keepalive '10'
+  set protocols bgp local-as 64499
+  set protocols bgp neighbor 10.0.0.4 remote-as '65540'
+  set protocols bgp neighbor 10.0.0.4 address-family ipv4-unicast soft-reconfiguration 'inbound'
+  set protocols bgp neighbor 10.0.0.4 timers holdtime '30'
+  set protocols bgp neighbor 10.0.0.4 timers keepalive '10'
 
 - **Important**: Disable connected check \
 
 .. code-block:: none
 
-  set protocols bgp 64499 neighbor 10.0.0.4 disable-connected-check
+  set protocols bgp neighbor 10.0.0.4 disable-connected-check

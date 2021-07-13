@@ -1,3 +1,5 @@
+:lastproofread: 2021-06-28
+
 .. _examples-azure-vpn-dual-bgp:
 
 Route-Based Redundant Site-to-Site VPN to Azure (BGP over IKEv2/IPsec)
@@ -129,27 +131,28 @@ Vyos configuration
 
 .. code-block:: none
 
-  set protocols static interface-route 10.0.0.4/32 next-hop-interface vti1
-  set protocols static interface-route 10.0.0.5/32 next-hop-interface vti2
+  set protocols static route 10.0.0.4/32 interface vti1
+  set protocols static route 10.0.0.5/32 interface vti2
 
 - Configure your BGP settings
 
 .. code-block:: none
 
-  set protocols bgp 64499 neighbor 10.0.0.4 remote-as '65540'
-  set protocols bgp 64499 neighbor 10.0.0.4 address-family ipv4-unicast soft-reconfiguration 'inbound'
-  set protocols bgp 64499 neighbor 10.0.0.4 timers holdtime '30'
-  set protocols bgp 64499 neighbor 10.0.0.4 timers keepalive '10'
+  set protocols bgp local-as 64499
+  set protocols bgp neighbor 10.0.0.4 remote-as '65540'
+  set protocols bgp neighbor 10.0.0.4 address-family ipv4-unicast soft-reconfiguration 'inbound'
+  set protocols bgp neighbor 10.0.0.4 timers holdtime '30'
+  set protocols bgp neighbor 10.0.0.4 timers keepalive '10'
 
-  set protocols bgp 64499 neighbor 10.0.0.5 remote-as '65540'
-  set protocols bgp 64499 neighbor 10.0.0.5 address-family ipv4-unicast soft-reconfiguration 'inbound'
-  set protocols bgp 64499 neighbor 10.0.0.5 timers holdtime '30'
-  set protocols bgp 64499 neighbor 10.0.0.5 timers keepalive '10'
+  set protocols bgp neighbor 10.0.0.5 remote-as '65540'
+  set protocols bgp neighbor 10.0.0.5 address-family ipv4-unicast soft-reconfiguration 'inbound'
+  set protocols bgp neighbor 10.0.0.5 timers holdtime '30'
+  set protocols bgp neighbor 10.0.0.5 timers keepalive '10'
 
 - **Important**: Disable connected check, otherwise the routes learned
   from Azure will not be imported into the routing table.
 
 .. code-block:: none
 
-  set protocols bgp 64499 neighbor 10.0.0.4 disable-connected-check
-  set protocols bgp 64499 neighbor 10.0.0.5 disable-connected-check
+  set protocols bgp neighbor 10.0.0.4 disable-connected-check
+  set protocols bgp neighbor 10.0.0.5 disable-connected-check

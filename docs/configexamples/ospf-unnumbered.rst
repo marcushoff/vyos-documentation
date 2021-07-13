@@ -1,10 +1,12 @@
+:lastproofread: 2021-06-29
+
 .. _examples-ospf-unnumbered:
 
 #########################
 OSPF unnumbered with ECMP
 #########################
 
-General infomration can be found in the :ref:`routing-ospf` chapter.
+General information can be found in the :ref:`routing-ospf` chapter.
 
 Configuration
 =============

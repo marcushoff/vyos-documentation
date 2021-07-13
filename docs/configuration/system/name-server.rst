@@ -4,6 +4,8 @@
 System DNS
 ##########
 
+.. warning:: If you are configuring a VRF for management purposes, there is
+   currently no way to force system DNS traffic via a specific VRF.
 
 This section describes configuring DNS on the system, namely:
 
@@ -28,6 +30,7 @@ Example
 In this example, some *OpenNIC* servers are used, two IPv4 addresses
 and two IPv6 addresses:
 
+.. stop_vyoslinter
 
 .. code-block:: none
 
@@ -36,6 +39,7 @@ and two IPv6 addresses:
    set system name-server 2a01:4f8:161:3441::1
    set system name-server 2a00:f826:8:2::195
 
+.. start_vyoslinter
 
 Domain search order
 ===================
@@ -53,6 +57,7 @@ list can be defined which will be used for domain searches.
 .. note:: Domain names can include letters, numbers, hyphens and periods
    with a maximum length of 253 characters.
 
+.. _name-server:domain-search-order_example:
 
 Example
 -------

@@ -5,7 +5,7 @@ import sys
 import ast
 
 IPV4SEG  = r'(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])'
-IPV4ADDR = r'(?:(?:' + IPV4SEG + r'\.){3,3}' + IPV4SEG + r')'
+IPV4ADDR = r'\b(?:(?:' + IPV4SEG + r'\.){3,3}' + IPV4SEG + r')\b'
 IPV6SEG  = r'(?:(?:[0-9a-fA-F]){1,4})'
 IPV6GROUPS = (
     r'(?:' + IPV6SEG + r':){7,7}' + IPV6SEG,                  # 1:2:3:4:5:6:7:8
@@ -43,17 +43,26 @@ def lint_ipv4(cnt, line):
     if ip is not None:
         ip = ipaddress.ip_address(ip.group().strip(' '))
         # https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv4Address.is_private
-        if ip.is_private is False and ip.is_multicast is False:
-            return (f"Use IPv4 reserved for Documentation (RFC 5737) or private Space: {ip}", cnt, 'error')
+        if ip.is_private:
+            return None
+        if ip.is_multicast:
+            return None
+        if ip.is_global is False:
+            return None
+        return (f"Use IPv4 reserved for Documentation (RFC 5737) or private Space: {ip}", cnt, 'error')
 
 
 def lint_ipv6(cnt, line):
     ip = re.search(IPV6ADDR, line, re.I)
     if ip is not None:
         ip = ipaddress.ip_address(ip.group().strip(' '))
-        # https://docs.python.org/3/library/ipaddress.html#ipaddress.IPv4Address.is_private
-        if ip.is_private is False and ip.is_multicast is False:
-            return (f"Use IPv6 reserved for Documentation (RFC 3849) or private Space: {ip}", cnt, 'error')
+        if ip.is_private:
+            return None
+        if ip.is_multicast:
+            return None
+        if ip.is_global is False:
+            return None
+        return (f"Use IPv6 reserved for Documentation (RFC 3849) or private Space: {ip}", cnt, 'error')
 
 
 def lint_AS(cnt, line):
@@ -64,42 +73,9 @@ def lint_AS(cnt, line):
 
 
 def lint_linelen(cnt, line):
+    line = line.rstrip()
     if len(line) > 80:
         return (f"Line too long: len={len(line)}", cnt, 'warning')
-
-
-def handle_file(path, file):
-    errors = []
-    path = '/'.join(path)
-    filepath = f"{path}/{file}"
-    try:
-        with open(filepath) as fp:
-            line = fp.readline()
-            cnt = 1
-            while line:
-                err_mac = lint_mac(cnt, line.strip())
-                err_ip4 = lint_ipv4(cnt, line.strip())
-                err_ip6 = lint_ipv6(cnt, line.strip())
-                err_len = lint_linelen(cnt, line.strip())
-                if err_mac:
-                    errors.append(err_mac)
-                if err_ip4:
-                    errors.append(err_ip4)
-                if err_ip6:
-                    errors.append(err_ip6)
-                if err_len:
-                    errors.append(err_len)
-                line = fp.readline()
-                cnt += 1
-    finally:
-        fp.close()
-
-    if len(errors) > 0:
-        print(f"File: {filepath}")
-        for error in errors:
-            print(error)
-        print('')
-        return False
 
 def handle_file_action(filepath):
     errors = []
@@ -107,21 +83,59 @@ def handle_file_action(filepath):
         with open(filepath) as fp:
             line = fp.readline()
             cnt = 1
+            test_line_lenght = True
+            start_vyoslinter = True
+            indentation = 0
             while line:
-                err_mac = lint_mac(cnt, line.strip())
-                err_ip4 = lint_ipv4(cnt, line.strip())
-                err_ip6 = lint_ipv6(cnt, line.strip())
-                err_len = lint_linelen(cnt, line.strip())
-                if err_mac:
-                    errors.append(err_mac)
-                if err_ip4:
-                    errors.append(err_ip4)
-                if err_ip6:
-                    errors.append(err_ip6)
-                if err_len:
-                    errors.append(err_len)
+                # search for ignore linter comments in lines
+                if ".. stop_vyoslinter" in line:
+                    start_vyoslinter = False
+                if ".. start_vyoslinter" in line:
+                    start_vyoslinter = True
+                if start_vyoslinter:
+                    # ignore every '.. code-block::' for line lenght
+                    # rst code-block have its own style in html the format in rst
+                    # and the build page must be the same
+                    if test_line_lenght is False:
+                        if len(line) > indentation:
+                            #print(f"'{line}'")
+                            #print(indentation)
+                            if line[indentation].isspace() is False:
+                                test_line_lenght = True
+
+                    if ".. code-block::" in line:
+                        test_line_lenght = False
+                        indentation = 0
+                        for i in line:
+                            if i.isspace():
+                                indentation = indentation + 1
+                            else:
+                                break
+                    
+                    err_mac = lint_mac(cnt, line.strip())
+                    # disable mac detection for the moment, too many false positives
+                    err_mac = None
+                    err_ip4 = lint_ipv4(cnt, line.strip())
+                    err_ip6 = lint_ipv6(cnt, line.strip())
+                    if test_line_lenght:
+                        err_len = lint_linelen(cnt, line)
+                    else:
+                        err_len = None
+                    if err_mac:
+                        errors.append(err_mac)
+                    if err_ip4:
+                        errors.append(err_ip4)
+                    if err_ip6:
+                        errors.append(err_ip6)
+                    if err_len:
+                        errors.append(err_len)
+                
                 line = fp.readline()
                 cnt += 1
+            
+            # ensure linter was not stop on top and forgot to tun on again
+            if start_vyoslinter == False:
+                errors.append((f"Don't forgett to turn linter back on", cnt, 'error'))
     finally:
         fp.close()
 
@@ -142,18 +156,19 @@ def main():
     try:
         files = ast.literal_eval(sys.argv[1])
         for file in files:
-                print(file)
-                if file[-4:] == ".rst":
+                if file[-4:] in [".rst", ".txt"] and "_build" not in file:
                     if handle_file_action(file) is False:
                         bool_error = False
     except Exception as e:
-        print(e)    
-        for root, dirs, files in os.walk("../docs"):
+        for root, dirs, files in os.walk("docs"):
             path = root.split(os.sep)
             for file in files:
-                if file[-4:] == ".rst":
-                    if handle_file(path, file) is False:
+                if file[-4:] in [".rst", ".txt"] and "_build" not in path:
+                    fpath = '/'.join(path)
+                    filepath = f"{fpath}/{file}"
+                    if handle_file_action(filepath) is False:
                         bool_error = False
+
     return bool_error
 
 

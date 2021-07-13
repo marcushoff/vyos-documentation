@@ -1,3 +1,5 @@
+:lastproofread: 2021-06-30
+
 .. _bridge-interface:
 
 ######
@@ -48,7 +50,7 @@ Member Interfaces
    and a cost, that is used to decide which is the shortest path to
    forward a packet. The lowest cost path is always used unless the
    other path is down. If you have multiple bridges and interfaces then
-   you may need to adjust the priorities to achieve optimium
+   you may need to adjust the priorities to achieve optimum
    performance.
 
 
@@ -71,7 +73,7 @@ Bridge Options
 
    Bridge maximum aging `<time>` in seconds (default: 20).
 
-   If a another bridge in the spanning tree does not send out a hello
+   If an another bridge in the spanning tree does not send out a hello
    packet for a long period of time, it is assumed to be dead.
 
 .. cfgcmd:: set interfaces bridge <interface> igmp querier
@@ -98,8 +100,8 @@ links providing fault tolerance if an active link fails.
 
    Spanning Tree Protocol forwarding `<delay>` in seconds (default: 15).
 
-   Forwarding delay time is the time spent in each of the Listening and
-   Learning states before the Forwarding state is entered. This delay is
+   The forwarding delay time is the time spent in each of the listening and
+   learning states before the Forwarding state is entered. This delay is
    so that when a new bridge comes onto a busy network it looks at some
    traffic before participating.
 
@@ -116,6 +118,22 @@ links providing fault tolerance if an active link fails.
 VLAN
 ====
 
+Enable VLAN-Aware Bridge
+------------------------
+
+.. cfgcmd:: set interfaces bridge <interface> enable-vlan
+
+   To activate the VLAN aware bridge, you must activate this setting to use VLAN 
+   settings for the bridge
+
+VLAN Options
+------------
+
+.. note:: It is not valid to use the `vif 1` option for VLAN aware bridges
+   because VLAN aware bridges assume that all unlabeled packets belong to 
+   the default VLAN 1 member and that the VLAN ID of the bridge's parent 
+   interface is always 1
+
 .. cmdinclude:: /_include/interface-vlan-8021q.txt
    :var0: bridge
    :var1: br0
@@ -127,6 +145,12 @@ VLAN
    VLAN tag enters the port, the data packet will be forced to add a tag of a
    specific vlan id. When the vlan id flag flows out, the tag of the vlan id
    will be stripped
+   
+   Example: Set `eth0` member port to be native VLAN 2
+   
+   .. code-block:: none
+
+     set interfaces bridge br1 member interface eth0 native-vlan 2
 
 .. cfgcmd:: set interfaces bridge <interface> member interface <member>
    allowed-vlan <vlan-id>
@@ -134,12 +158,34 @@ VLAN
    Allows specific VLAN IDs to pass through the bridge member interface. This
    can either be an individual VLAN id or a range of VLAN ids delimited by a
    hyphen.
+   
+   Example: Set `eth0` member port to be allowed VLAN 4
+   
+   .. code-block:: none
+   
+     set interfaces bridge br1 member interface eth0 allowed-vlan 4
+  
+   Example: Set `eth0` member port to be allowed VLAN 6-8
+   
+   .. code-block:: none
+   
+     set interfaces bridge br1 member interface eth0 allowed-vlan 6-8
 
-*******
-Example
-*******
+Port Mirror (SPAN)
+==================
+.. cmdinclude:: ../../_include/interface-mirror.txt
+   :var0: bridge
+   :var1: br1
+   :var2: eth3
 
-Creating a bridge interface is very simple. In this example we will
+********
+Examples
+********
+
+Create a basic bridge
+=====================
+
+Creating a bridge interface is very simple. In this example, we will
 have:
 
 * A bridge named `br100`
@@ -170,9 +216,9 @@ This results in the active configuration:
     }
     stp
 
-*******
-Example
-*******
+
+Using VLAN aware Bridge
+=======================
 
 An example of creating a VLAN-aware bridge is as follows:
 
@@ -184,6 +230,7 @@ An example of creating a VLAN-aware bridge is as follows:
 
 .. code-block:: none
 
+  set interfaces bridge br100 enable-vlan
   set interfaces bridge br100 member interface eth1 allowed-vlan 10
   set interfaces bridge br100 member interface eth2 native-vlan 10
   set interfaces bridge br100 vif 10 address 192.0.2.1/24
@@ -195,6 +242,7 @@ This results in the active configuration:
 .. code-block:: none
 
    vyos@vyos# show interfaces bridge br100
+    enable-vlan
     member {
         interface eth1 {
             allowed-vlan 10
@@ -209,9 +257,9 @@ This results in the active configuration:
         address 2001:db8::ffff/64
     }
 
-*******
-Example
-*******
+
+Using the operation mode command to view Bridge Information
+===========================================================
 
 .. opcmd:: show bridge
 

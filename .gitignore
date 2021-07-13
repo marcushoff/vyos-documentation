@@ -5,6 +5,7 @@ _build/
 venv/
 ENV/
 .venv
+Pipfile.lock
 
 # put various editor ignores here
 .vscode/
@@ -15,7 +16,7 @@ ENV/
 
 # python cache files
 *.pyc
-__pychache__
+__pycache__
 
 # dotenv
 .env

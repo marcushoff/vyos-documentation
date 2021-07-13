@@ -1,3 +1,5 @@
+:lastproofread: 2021-07-09
+
 .. _pppoe-interface:
 
 #####
@@ -19,7 +21,7 @@ Operating Modes
 ***************
 
 VyOS supports setting up PPPoE in two different ways to a PPPoE internet
-connection. This is due to most ISPs provide a modem that is also a wireless
+connection. This is because most ISPs provide a modem that is also a wireless
 router.
 
 Home Users
@@ -45,7 +47,7 @@ your DSL Modem/Router switch into a Bridged Mode so it only acts as a DSL
 Transceiver device to connect between the Ethernet link of your VyOS and the
 phone cable. Once your DSL Transceiver is in Bridge Mode, you should get no
 IP address from it. Please make sure you connect to the Ethernet Port 1 if
-your DSL Transeiver has a switch, as some of them only work this way.
+your DSL Transceiver has a switch, as some of them only work this way.
 
 Once you have an Ethernet device connected, i.e. `eth0`, then you can
 configure it to open the PPPoE session for you and your DSL Transceiver
@@ -101,7 +103,7 @@ PPPoE options
 
    When set the interface is enabled for "dial-on-demand".
 
-   Use this command to instruct the system to establish a PPPoE connections
+   Use this command to instruct the system to establish a PPPoE connection
    automatically once traffic passes through the interface. A disabled on-demand
    connection is established at boot time and remains up. If the link fails for
    any reason, the link is brought back up immediately.
@@ -113,7 +115,7 @@ PPPoE options
    timeout period, after which an idle PPPoE link will be disconnected. A
    non-zero idle timeout will never disconnect the link after it first came up.
 
-.. cfgcmd:: set interfaces pppoe <interface> default-route
+.. cfgcmd:: set interfaces pppoe <interface> default-route [auto | force | none]
 
    Use this command to specify whether to automatically add a default route
    pointing to the endpoint of the PPPoE when the link comes up. The default
@@ -121,6 +123,16 @@ PPPoE options
 
    **default:** A default route to the remote endpoint is automatically added
    when the link comes up (i.e. auto).
+
+   * auto: A default route is added if no other default route (From any
+     source) already exists.
+   * force: A default route is added after removing *all* existing default
+     routes.
+   * none: No default route is installed.
+
+.. note:: In all modes except 'none', all default routes using this interface
+   will be removed when the interface is torn down - even manually installed
+   static routes.
 
 .. cfgcmd:: set interfaces pppoe <interface> idle-timeout <time>
 
@@ -215,12 +227,12 @@ Connect/Disconnect
 .. opcmd:: disconnect interface <interface>
 
    Test disconnecting given connection-oriented interface. `<interface>` can be
-   ``pppoe0`` as example.
+   ``pppoe0`` as the example.
 
 .. opcmd:: connect interface <interface>
 
    Test connecting given connection-oriented interface. `<interface>` can be
-   ``pppoe0`` as example.
+   ``pppoe0`` as the example.
 
 *******
 Example
@@ -240,9 +252,10 @@ Requirements:
 * With the ``default-route`` option set to ``auto``, VyOS will only add the
   default gateway you receive from your DSL ISP to the routing table if you
   have no other WAN connections. If you wish to use a dual WAN connection,
-  change the ``default-route`` option to ``force``.
+  change the ``default-route`` option to ``force``.  You could also install
+  a static route and set the ``default-route`` option to ``none``.
 * With the ``name-server`` option set to ``none``, VyOS will ignore the
-  nameservers your ISP sens you and thus you can fully rely on the ones you
+  nameservers your ISP sends you and thus you can fully rely on the ones you
   have configured statically.
 
 .. note:: Syntax has changed from VyOS 1.2 (crux) and it will be automatically
@@ -287,16 +300,20 @@ which is the default VLAN for Deutsche Telekom:
 IPv6 DHCPv6-PD Example
 ----------------------
 
+.. stop_vyoslinter
+
 The following configuration will assign a /64 prefix out of a /56 delegation
 to eth0. The IPv6 address assigned to eth0 will be <prefix>::ffff/64.
 If you do not know the prefix size delegated to you, start with sla-len 0.
+
+.. start_vyoslinter
 
 .. code-block:: none
 
   set interfaces pppoe pppoe0 authentication user vyos
   set interfaces pppoe pppoe0 authentication password vyos
-  set interfaces pppoe pppoe0 dhcpv6-options prefix-delegation interface eth0 address 65535
-  set interfaces pppoe pppoe0 dhcpv6-options prefix-delegation interface eth0 sla-id 0
-  set interfaces pppoe pppoe0 dhcpv6-options prefix-delegation interface eth0 sla-len 8
+  set interfaces pppoe pppoe0 dhcpv6-options pd 0 interface eth0 address '1'
+  set interfaces pppoe pppoe0 dhcpv6-options pd 0 interface eth0 sla-id '0'
+  set interfaces pppoe pppoe0 dhcpv6-options pd 0 length '56'
   set interfaces pppoe pppoe0 ipv6 address autoconf
   set interfaces pppoe pppoe0 source-interface eth1

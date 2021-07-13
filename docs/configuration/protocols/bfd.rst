@@ -9,6 +9,12 @@ BFD
 :abbr:`BFD (Bidirectional Forwarding Detection)` is described and extended by
 the following RFCs: :rfc:`5880`, :rfc:`5881` and :rfc:`5883`.
 
+In the age of very fast networks, a second of unreachability may equal millions of lost packets.
+The idea behind BFD is to detect very quickly when a peer is down and take action extremely fast.
+
+BFD sends lots of small UDP packets very quickly to ensures that the peer is still alive.
+
+This allows avoiding the timers defined in BGP and OSPF protocol to expires.
 
 Configure BFD
 =============
@@ -25,19 +31,22 @@ Configure BFD
 
    Allow this BFD peer to not be directly connected
 
-.. cfgcmd:: set protocols bfd peer <address> source [address <address> | interface <interface>]
+.. cfgcmd:: set protocols bfd peer <address> source
+   [address <address> | interface <interface>]
 
    Bind listener to specifid interface/address, mandatory for IPv6
 
 .. cfgcmd:: set protocols bfd peer <address> interval echo-interval <10-60000>
 
-   The minimal echo receive transmission interval that this system is capable of handling
+   The minimal echo receive transmission interval that this system is
+   capable of handling
 
 .. cfgcmd:: set protocols bfd peer <address> interval multiplier <2-255>
 
    Remote transmission interval will be multiplied by this value
 
-.. cfgcmd:: set protocols bfd peer <address> interval [receive | transmit] <10-60000>
+.. cfgcmd:: set protocols bfd peer <address> interval
+   [receive | transmit] <10-60000>
 
    Interval in milliseconds
 
@@ -49,26 +58,33 @@ Configure BFD
 Enable BFD in BGP
 -----------------
 
-.. cfgcmd:: set protocols bgp <asn> neighbor <address> bfd
+.. cfgcmd:: set protocols bgp neighbor <neighbor> bfd
 
    Enable BFD on a single BGP neighbor
 
-.. cfgcmd:: set protocols bgp <asn> peer-group <group> bfd
+.. cfgcmd:: set protocols bgp peer-group <neighbor> bfd
 
    Enable BFD on a BGP peer group
-
 
 
 Enable BFD in OSPF
 ------------------
 
-.. cfgcmd:: set interfaces ethernet <ethN> ip ospf bfd
+.. cfgcmd:: set interfaces ethernet <interface> ip ospf bfd
 
-   Enable BFD for ospf on a interface
+   Enable BFD for OSPF on a interface
 
-.. cfgcmd:: set interfaces ethernet <ethN> ipv6 ospfv3 bfd
+.. cfgcmd:: set interfaces ethernet <interface> ipv6 ospfv3 bfd
 
-   Enable BFD for ospfv3 on a interface
+   Enable BFD for OSPFv3 on a interface
+
+
+Enable BFD in ISIS
+------------------
+
+.. cfgcmd:: set protocols isis <name> interface <interface> bfd
+
+   Enable BFD for ISIS on a interface
 
 
 

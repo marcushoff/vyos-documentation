@@ -1,3 +1,5 @@
+:lastproofread: 2021-07-05
+
 .. _openvpn:
 
 #######
@@ -95,7 +97,7 @@ Remote Configuration:
   set interfaces openvpn vtun1 remote-address '10.255.1.1'
 
 The configurations above will default to using 256-bit AES in GCM mode
-for encryption (if both sides supports NCP) and SHA-1 for HMAC authentication.
+for encryption (if both sides support NCP) and SHA-1 for HMAC authentication.
 SHA-1 is considered weak, but other hashing algorithms are available, as are
 encryption algorithms:
 
@@ -120,7 +122,7 @@ OpenVPN version < 2.4.0.
     aes256gcm    AES algorithm with 256-bit key GCM
 
 This sets the accepted ciphers to use when version => 2.4.0 and NCP is
-enabled (which is default). Default NCP cipher for versions >= 2.4.0 is
+enabled (which is the default). Default NCP cipher for versions >= 2.4.0 is
 aes256gcm. The first cipher in this list is what server pushes to clients.
 
 .. code-block:: none
@@ -159,16 +161,16 @@ Local Configuration:
 
 .. code-block:: none
 
-  set protocols static interface-route 10.1.0.0/16 next-hop-interface vtun1
+  set protocols static route 10.1.0.0/16 interface vtun1
 
 Remote Configuration:
 
 .. code-block:: none
 
-  set protocols static interface-route 10.0.0.0/16 next-hop-interface vtun1
+  set protocols static route 10.0.0.0/16 interface vtun1
 
 Firewall policy can also be applied to the tunnel interface for `local`, `in`,
-and `out` directions and function identically to ethernet interfaces.
+and `out` directions and functions identically to ethernet interfaces.
 
 If making use of multiple tunnels, OpenVPN must have a way to distinguish
 between different tunnels aside from the pre-shared-key. This is either by
@@ -186,7 +188,8 @@ Multi-client server is the most popular OpenVPN mode on routers. It always uses
 x.509 authentication and therefore requires a PKI setup. Refer this section
 **Generate X.509 Certificate and Keys** to generate a CA certificate,
 a server certificate and key, a certificate revocation list, a Diffie-Hellman
-key exchange parameters file. You do not need client certificates and keys for the server setup.
+key exchange parameters file. You do not need client certificates and keys for
+the server setup.
 
 In this example we will use the most complicated case: a setup where each
 client is a router that has its own subnet (think HQ and branch offices), since
@@ -252,7 +255,7 @@ internally, so we need to create a route to the 10.23.0.0/20 network ourselves:
 
 .. code-block:: none
 
-  set protocols static interface-route 10.23.0.0/20 next-hop-interface vtun10
+  set protocols static route 10.23.0.0/20 interface vtun10
 
 Generate X.509 Certificate and Keys
 -----------------------------------
@@ -269,16 +272,16 @@ Copy the Easy-RSA scripts to a new directory to modify the values.
   cd /config/my-easy-rsa-config
 
 To ensure the consistent use of values when generating the PKI, set default
-values to be used by the PKI generating scripts. Rename the vars.example filename
-to vars
+values to be used by the PKI generating scripts. Rename the vars.example
+filename to vars
 
 .. code-block:: none
 
   mv vars.example vars
 
-Following is the instance of the file after editing. You may also change other values in
-the file at your discretion/need, though for most cases the defaults should be just fine.
-(do not leave any of these parameters blank)
+Following is the instance of the file after editing. You may also change other
+values in the file at your discretion/need, though for most cases the defaults
+should be just fine. (do not leave any of these parameters blank)
 
 .. code-block:: none
 
@@ -292,9 +295,9 @@ the file at your discretion/need, though for most cases the defaults should be j
   set_var EASYRSA_KEY_SIZE        2048
 
 
-init-pki option will create a new pki directory or will delete any previously generated
-certificates stored in that folder. The term 'central' is used to refer server and
-'branch' for client
+init-pki option will create a new pki directory or will delete any previously
+generated certificates stored in that folder. The term 'central' is used to
+refer server and 'branch' for client
 
 .. note:: Remember the “CA Key Passphrase” prompted in build-ca command,
    as it will be asked in signing the server/client certificate.
@@ -308,33 +311,34 @@ certificates stored in that folder. The term 'central' is used to refer server a
   vyos@vyos:/config/my-easy-rsa-config$./easyrsa gen-dh
   vyos@vyos:/config/my-easy-rsa-config$./easyrsa build-client-full branch1 nopass
 
-To generate a certificate revocation list for any client, execute these commands:
+To generate a certificate revocation list for any client, execute these
+commands:
 
 .. code-block:: none
 
   vyos@vyos:/config/my-easy-rsa-config$./easyrsa revoke client1
   vyos@vyos:/config/my-easy-rsa-config$ ./easyrsa gen-crl
 
-Copy the files to /config/auth/ovpn/ to use in OpenVPN tunnel creation
+Copy the files to /config/auth/openvpn/ to use in OpenVPN tunnel creation
 
 .. code-block:: none
 
-  vyos@vyos:/config/my-easy-rsa-config$ sudo mkdir /config/auth/ovpn
-  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/ca.crt /config/auth/ovpn
-  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/dh.pem  /config/auth/ovpn
-  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/private/central.key /config/auth/ovpn
-  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/issued/central.crt  /config/auth/ovpn
-  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/crl.pem /config/auth/ovpn
+  vyos@vyos:/config/my-easy-rsa-config$ sudo mkdir /config/auth/openvpn
+  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/ca.crt /config/auth/openvpn
+  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/dh.pem  /config/auth/openvpn
+  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/private/central.key /config/auth/openvpn
+  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/issued/central.crt  /config/auth/openvpn
+  vyos@vyos:/config/my-easy-rsa-config$ sudo cp pki/crl.pem /config/auth/openvpn
 
-Additionally, each client needs a copy of ca.crt and its own client key and cert files.
-The files are plaintext so they may be copied either manually,
+Additionally, each client needs a copy of ca.crt and its own client key and
+cert files. The files are plaintext so they may be copied either manually,
 or through a remote file transfer tool like scp. Whichever method you use,
 the files need to end up in the proper location on each router.
 For example, Branch 1's router might have the following files:
 
 .. code-block:: none
 
-  vyos@branch1-rtr:$ ls /config/auth/ovpn
+  vyos@branch1-rtr:$ ls /config/auth/openvpn
   ca.crt branch1.crt branch1.key
 
 Client Authentication
@@ -344,18 +348,19 @@ LDAP
 ----
 
 Enterprise installations usually ship a kind of directory service which is used
-to have a single password store for all employees. VyOS and OpenVPN support using
-LDAP/AD as single user backend.
+to have a single password store for all employees. VyOS and OpenVPN support
+using LDAP/AD as single user backend.
 
 Authentication is done by using the ``openvpn-auth-ldap.so`` plugin which is
-shipped with every VyOS installation. A dedicated configuration file is required.
-It is best practise to store it in ``/config`` to survive image updates
+shipped with every VyOS installation. A dedicated configuration file is
+required. It is best practise to store it in ``/config`` to survive image
+updates
 
 .. code-block:: none
 
   set interfaces openvpn vtun0 openvpn-option "--plugin /usr/lib/openvpn/openvpn-auth-ldap.so /config/auth/ldap-auth.config"
 
-The required config file may look like:
+The required config file may look like this:
 
 .. code-block:: none
 
@@ -435,7 +440,8 @@ If you only want to check if the user account is enabled and can authenticate
     RequireGroup    false
   </Authorization>
 
-A complete LDAP auth OpenVPN configuration could look like the following example:
+A complete LDAP auth OpenVPN configuration could look like the following
+example:
 
 .. code-block:: none
 
@@ -453,8 +459,8 @@ A complete LDAP auth OpenVPN configuration could look like the following example
        server {
            domain-name example.com
            max-connections 5
-           name-server 1.1.1.1
-           name-server 9.9.9.9
+           name-server 203.0.113.0.10
+           name-server 198.51.100.3
            subnet 172.18.100.128/29
        }
        tls {
@@ -468,14 +474,16 @@ A complete LDAP auth OpenVPN configuration could look like the following example
 Client
 ======
 
-VyOS can not only act as an OpenVPN site-to-site or Server for multiple clients.
+VyOS can not only act as an OpenVPN site-to-site or server for multiple clients.
 You can indeed also configure any VyOS OpenVPN interface as an OpenVPN client
 connecting to a VyOS OpenVPN server or any other OpenVPN server.
 
 Given the following example we have one VyOS router acting as OpenVPN server
-and another VyOS router acting as OpenVPN client. The Server also pushes a
+and another VyOS router acting as OpenVPN client. The server also pushes a
 static client IP address to the OpenVPN client. Remember, clients are identified
 using their CN attribute in the SSL certificate.
+
+.. _openvpn:client_server:
 
 Server
 ------
@@ -501,6 +509,8 @@ Server
   set interfaces openvpn vtun10 tls key-file '/config/auth/server.key'
   set interfaces openvpn vtun10 use-lzo-compression
 
+.. _openvpn:client_client:
+
 Client
 ------
 
@@ -521,7 +531,7 @@ Client
 Options
 =======
 
-We do not have CLI nodes for every single OpenVPN options. If an option is
+We do not have CLI nodes for every single OpenVPN option. If an option is
 missing, a feature request should be opened at Phabricator_ so all users can
 benefit from it (see :ref:`issues_features`).
 
@@ -534,11 +544,12 @@ Will add ``persistent-key`` at the end of the generated OpenVPN configuration.
 Please use this only as last resort - things might break and OpenVPN won't start
 if you pass invalid options/syntax.
 
-.. cfgcmd:: set interfaces openvpn vtun10 openvpn-option 'push &quot;keepalive 1 10&quot;'
+.. cfgcmd:: set interfaces openvpn vtun10 openvpn-option
+   'push &quot;keepalive 1 10&quot;'
 
 Will add ``push "keepalive 1 10"`` to the generated OpenVPN config file.
 
-.. note:: Sometimes option lines in the generated OpenVPN configurarion require
+.. note:: Sometimes option lines in the generated OpenVPN configuration require
    quotes. This is done through a hack on our config generator. You can pass
    quotes using the ``&quot;`` statement.
 
@@ -563,7 +574,8 @@ The following commands let you check tunnel status.
 
 .. opcmd:: show openvpn site-to-site
 
-   Use this command to check the tunnel status for OpenVPN site-to-site interfaces.
+   Use this command to check the tunnel status for OpenVPN site-to-site 
+   interfaces.
 
 
 Reset OpenVPN
@@ -573,11 +585,11 @@ The following commands let you reset OpenVPN.
 
 .. opcmd:: reset openvpn client <text>
 
-   Use this command to reset specified OpenVPN client.
+   Use this command to reset the specified OpenVPN client.
 
 .. opcmd:: reset openvpn interface <interface>
 
-   Uset this command to reset the OpenVPN process on a specific interface.
+   Use this command to reset the OpenVPN process on a specific interface.
 
 
 

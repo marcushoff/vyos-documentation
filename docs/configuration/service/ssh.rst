@@ -47,12 +47,12 @@ Configuration
 
 .. cfgcmd:: set service ssh ciphers <cipher>
 
-  Define allowed ciphers used for the SSH connection. A number of allowed ciphers
-  can be specified, use multiple occurrences to allow multiple ciphers.
+  Define allowed ciphers used for the SSH connection. A number of allowed
+  ciphers can be specified, use multiple occurrences to allow multiple ciphers.
 
   List of supported ciphers: ``3des-cbc``, ``aes128-cbc``, ``aes192-cbc``,
-  ``aes256-cbc``, ``aes128-ctr``, ``aes192-ctr``, ``aes256-ctr``, ``arcfour128``,
-  ``arcfour256``, ``arcfour``, ``blowfish-cbc``, ``cast128-cbc``
+  ``aes256-cbc``, ``aes128-ctr``, ``aes192-ctr``, ``aes256-ctr``,
+  ``arcfour128``, ``arcfour256``, ``arcfour``, ``blowfish-cbc``, ``cast128-cbc``
 
 .. cfgcmd:: set service ssh disable-password-authentication
 
@@ -72,11 +72,12 @@ Configuration
 
   List of supported MACs: ``hmac-md5``, ``hmac-md5-96``, ``hmac-ripemd160``,
   ``hmac-sha1``, ``hmac-sha1-96``, ``hmac-sha2-256``, ``hmac-sha2-512``,
-  ``umac-64@openssh.com``, ``umac-128@openssh.com``, ``hmac-md5-etm@openssh.com``,
-  ``hmac-md5-96-etm@openssh.com``, ``hmac-ripemd160-etm@openssh.com``,
-  ``hmac-sha1-etm@openssh.com``, ``hmac-sha1-96-etm@openssh.com``,
-  ``hmac-sha2-256-etm@openssh.com``, ``hmac-sha2-512-etm@openssh.com``,
-  ``umac-64-etm@openssh.com``, ``umac-128-etm@openssh.com``
+  ``umac-64@openssh.com``, ``umac-128@openssh.com``,
+  ``hmac-md5-etm@openssh.com``, ``hmac-md5-96-etm@openssh.com``,
+  ``hmac-ripemd160-etm@openssh.com``, ``hmac-sha1-etm@openssh.com``,
+  ``hmac-sha1-96-etm@openssh.com``, ``hmac-sha2-256-etm@openssh.com``,
+  ``hmac-sha2-512-etm@openssh.com``, ``umac-64-etm@openssh.com``,
+  ``umac-128-etm@openssh.com``
 
 .. cfgcmd:: set service ssh access-control <allow | deny> <group | user> <name>
 
@@ -95,7 +96,8 @@ Configuration
   List of supported algorithms: ``diffie-hellman-group1-sha1``,
   ``diffie-hellman-group14-sha1``, ``diffie-hellman-group14-sha256``,
   ``diffie-hellman-group16-sha512``, ``diffie-hellman-group18-sha512``,
-  ``diffie-hellman-group-exchange-sha1``, ``diffie-hellman-group-exchange-sha256``,
+  ``diffie-hellman-group-exchange-sha1``,
+  ``diffie-hellman-group-exchange-sha256``,
   ``ecdh-sha2-nistp256``, ``ecdh-sha2-nistp384``, ``ecdh-sha2-nistp521``,
   ``curve25519-sha256`` and ``curve25519-sha256@libssh.org``.
 
@@ -106,3 +108,81 @@ Configuration
 .. cfgcmd:: set service ssh vrf <name>
 
   Specify name of the :abbr:`VRF (Virtual Routing and Forwarding)` instance.
+
+Operation
+=========
+
+.. opcmd:: restart ssh
+
+  Restart the SSH daemon process, the current session is not affected, only the
+  background daemon is restarted.
+
+.. opcmd:: generate ssh server-key
+
+  Re-generated the public/private keyportion which SSH uses to secure
+  connections.
+
+  .. note:: Already learned known_hosts files of clients need an update as the
+     public key will change.
+
+.. opcmd:: generate ssh client-key /path/to/private_key
+
+  Re-generated a known pub/private keyfile which can be used to connect to
+  other services (e.g. RPKI cache).
+
+  Example:
+
+  .. code-block:: none
+
+    vyos@vyos:~$ generate ssh client-key /config/auth/id_rsa_rpki
+    Generating public/private rsa key pair.
+    Your identification has been saved in /config/auth/id_rsa_rpki.
+    Your public key has been saved in /config/auth/id_rsa_rpki.pub.
+    The key fingerprint is:
+    SHA256:XGv2PpdOzVCzpmEzJZga8hTRq7B/ZYL3fXaioLFLS5Q cpo@LR1.wue3
+    The key's randomart image is:
+    +---[RSA 2048]----+
+    |         oo      |
+    |          ..o    |
+    |       . o.o.. o.|
+    |       o+ooo  o.o|
+    |        Eo*  =.o |
+    |       o = +.o*+ |
+    |        = o *.o.o|
+    |       o * +.o+.+|
+    |        =.. o=.oo|
+    +----[SHA256]-----+
+
+  Two new files ``/config/auth/id_rsa_rpki`` and
+  ``/config/auth/id_rsa_rpki.pub``
+  will be created.
+
+.. opcmd:: generate public-key-commands name <username> path <location>
+
+   Generate the configuration mode commands to add a public key for
+   :ref:`ssh_key_based_authentication`.
+   ``<location>`` can be a local path or a URL pointing at a remote file.
+
+   Supported remote protocols are FTP, HTTP, HTTPS, SCP/SFTP and TFTP.
+
+  Example:
+
+  .. code-block:: none
+
+    alyssa@vyos:~$ generate public-key-commands name alyssa path sftp://example.net/home/alyssa/.ssh/id_rsa.pub
+    # To add this key as an embedded key, run the following commands:
+    configure
+    set system login user alyssa authentication public-keys alyssa@example.net key AAA...
+    set system login user alyssa authentication public-keys alyssa@example.net type ssh-rsa
+    commit
+    save
+    exit
+
+    ben@vyos:~$ generate public-key-command user ben path ~/.ssh/id_rsa.pub
+    # To add this key as an embedded key, run the following commands:
+    configure
+    set system login user ben authentication public-keys ben@vyos key AAA...
+    set system login user ben authentication public-keys ben@vyos type ssh-dss
+    commit
+    save
+    exit

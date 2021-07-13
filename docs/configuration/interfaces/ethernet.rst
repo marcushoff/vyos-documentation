@@ -1,3 +1,5 @@
+:lastproofread: 2021-06-30
+
 .. _ethernet-interface:
 
 ########
@@ -66,6 +68,58 @@ Ethernet options
 
     set interfaces ethernet eth0 mirror eth1
 
+Offloading
+----------
+
+.. cfgcmd:: set interfaces ethernet <interface> offload <gro | gso | sg | tso |
+  ufo | rps>
+
+  Enable different types of hardware offloading on the given NIC.
+
+  :abbr:`GSO (Generic Segmentation Offload)` is a pure software offload that is
+  meant to deal with cases where device drivers cannot perform the offloads
+  described above. What occurs in GSO is that a given skbuff will have its data
+  broken out over multiple skbuffs that have been resized to match the MSS
+  provided via skb_shinfo()->gso_size.
+
+  Before enabling any hardware segmentation offload a corresponding software
+  offload is required in GSO. Otherwise it becomes possible for a frame to be
+  re-routed between devices and end up being unable to be transmitted.
+
+  :abbr:`GRO (Generic receive offload)` is the complement to GSO. Ideally any
+  frame assembled by GRO should be segmented to create an identical sequence of
+  frames using GSO, and any sequence of frames segmented by GSO should be able
+  to be reassembled back to the original by GRO. The only exception to this is
+  IPv4 ID in the case that the DF bit is set for a given IP header. If the
+  value of the IPv4 ID is not sequentially incrementing it will be altered so
+  that it is when a frame assembled via GRO is segmented via GSO.
+
+  :abbr:`RPS (Receive Packet Steering)` is logically a software implementation
+  of :abbr:`RSS (Receive Side Scaling)`. Being in software, it is necessarily
+  called later in the datapath. Whereas RSS selects the queue and hence CPU that
+  will run the hardware interrupt handler, RPS selects the CPU to perform
+  protocol processing above the interrupt handler. This is accomplished by
+  placing the packet on the desired CPU's backlog queue and waking up the CPU
+  for processing. RPS has some advantages over RSS:
+
+  - it can be used with any NIC,
+  - software filters can easily be added to hash over new protocols,
+  - it does not increase hardware device interrupt rate (although it does
+    introduce inter-processor interrupts (IPIs)).
+
+
+.. cmdinclude:: /_include/interface-xdp.txt
+   :var0: ethernet
+   :var1: eth0
+
+Authentication (EAPoL)
+----------------------
+
+.. cmdinclude:: /_include/interface-eapol.txt
+   :var0: ethernet
+   :var1: eth0
+
+
 VLAN
 ====
 
@@ -82,6 +136,13 @@ QinQ (802.1ad)
 .. cmdinclude:: /_include/interface-vlan-8021ad.txt
    :var0: ethernet
    :var1: eth0
+
+Port Mirror (SPAN)
+==================
+.. cmdinclude:: ../../_include/interface-mirror.txt
+   :var0: ethernet
+   :var1: eth1
+   :var2: eth3
 
 *********
 Operation
@@ -117,6 +178,8 @@ Operation
            56735451     179841          0          0          0     142380
          TX:  bytes    packets     errors    dropped    carrier collisions
             5601460      62595          0          0          0          0
+
+.. stop_vyoslinter
 
 .. opcmd:: show interfaces ethernet <interface> physical
 
@@ -156,6 +219,8 @@ Operation
      supports-eeprom-access: no
      supports-register-dump: yes
      supports-priv-flags: no
+
+.. start_vyoslinter
 
 .. opcmd:: show interfaces ethernet <interface> physical offload
 
@@ -224,3 +289,28 @@ Operation
         Vendor SN               : FNS092xxxxx
         Date code               : 0506xx
 
+.. stop_vyoslinter
+
+.. opcmd:: show interfaces ethernet <interface> xdp
+
+   Display XDP forwarding statistics
+
+   .. code-block:: none
+
+     vyos@vyos:~$ show interfaces ethernet eth1 xdp
+
+     Collecting stats from BPF map
+      - BPF map (bpf_map_type:6) id:176 name:xdp_stats_map key_size:4 value_size:16 max_entries:5
+     XDP-action
+     XDP_ABORTED            0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:0.250340
+     XDP_DROP               0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:0.250317
+     XDP_PASS               0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:0.250314
+     XDP_TX                 0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:0.250313
+     XDP_REDIRECT           0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:0.250313
+
+     XDP-action
+     XDP_ABORTED            0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:2.000410
+     XDP_DROP               0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:2.000414
+     XDP_PASS               0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:2.000414
+     XDP_TX                 0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:2.000414
+     XDP_REDIRECT           0 pkts (         0 pps)           0 Kbytes (     0 Mbits/s) period:2.000414

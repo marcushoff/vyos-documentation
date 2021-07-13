@@ -1,3 +1,5 @@
+:lastproofread: 2021-07-05
+
 .. _macsec-interface:
 
 ######
@@ -27,13 +29,10 @@ Common interface configuration
 MACsec options
 ==============
 
-.. cfgcmd:: set interfaces macsec <interface> security cipher [gcm-aes-128]
+.. cfgcmd:: set interfaces macsec <interface> security cipher <gcm-aes-128|gcm-aes-256>
 
   Select cipher suite used for cryptographic operations. This setting is
   mandatory.
-
-  .. note:: gcm-aes-256 support planned once iproute2 package is updated to
-     version >=5.2.
 
 .. cfgcmd:: set interfaces macsec <interface> security encrypt
 
@@ -43,7 +42,7 @@ MACsec options
 .. cfgcmd:: set interfaces macsec <interface> source-interface <physical-source>
 
   A physical interface is required to connect this MACsec instance to. Traffic
-  leaving this interfac will now be authenticated/encrypted.
+  leaving this interface will now be authenticated/encrypted.
 
 Key Management
 --------------
@@ -53,7 +52,7 @@ individual peers.
 
 .. cfgcmd:: set interfaces macsec <interface> security mka cak <key>
 
-  IEEE 802.1X/MACsec pre-shared key mode. This allows to configure MACsec with
+  IEEE 802.1X/MACsec pre-shared key mode. This allows configuring MACsec with
   a pre-shared key using a (CAK,CKN) pair.
 
 .. cfgcmd:: set interfaces macsec <interface> security mka ckn <key>

@@ -8,6 +8,12 @@ There are two flags available to aid in debugging configuration scripts.
 Since configuration loading issues will manifest during boot, the flags are
 passed as kernel boot parameters.
 
+ISO image build
+===============
+
+When having trouble compiling your own ISO image or debugging Jenkins issues
+you can follow the steps at :ref:`iso_build_issues`.
+
 System Startup
 ==============
 
@@ -29,7 +35,8 @@ Kernel
   CLI. In this circumstance, the kernel boot parameter ``vyos-config-debug``
   will ensure access to the system as user ``vyos``, and will log a Python
   stack trace to the file ``/tmp/boot-config-trace``.
-  File ``boot-config-trace`` will generate only if config loaded with a failure status.
+  File ``boot-config-trace`` will generate only if config loaded with a failure
+  status.
 
 Live System
 ===========
@@ -72,9 +79,54 @@ will have the same effect as ``touch /tmp/vyos.ifconfig.debug``.
   file. The default file is ``/tmp/full-log`` but it can be changed.
 
 .. note:: In order to retrieve the debug output on the command-line you need to
-  disable ``vyos-configd`` in addition. This can be run either one-time by calling
-  ``sudo systemctl stop vyos-configd`` or make this reboot-safe by calling
-  ``sudo systemctl disable vyos-configd``.
+  disable ``vyos-configd`` in addition. This can be run either one-time by
+  calling ``sudo systemctl stop vyos-configd`` or make this reboot-safe by
+  calling ``sudo systemctl disable vyos-configd``.
+
+FRR
+---
+
+Recent versions use the ``vyos.frr`` framework. The Python class is located
+inside our ``vyos-1x:python/vyos/frr.py``. It comes with an embedded debugging/
+(print style) debugger as vyos.ifconfig does.
+
+To enable debugging just run: ``$ touch /tmp/vyos.frr.debug``
+
+Debugging Python Code with PDB
+------------------------------
+
+Sometimes it might be useful to debug Python code interactively on the live
+system rather than a IDE. This can be achieved using pdb.
+
+Let us assume you want to debug a Python script that is called by an op-mode
+command. After you found the script by looking up the op-mode-defitions you
+can edit the script in the live system using e.g. vi:
+``vi /usr/libexec/vyos/op_mode/show_xyz.py``
+
+Insert the following statement right before the section where you want to
+investigate a problem (e.g. a statement you see in a backtrace):
+``import pdb; pdb.set_trace()``
+Optionally you can surrounded this statement by an ``if`` which only triggers
+under the condition you are interested in.
+
+Once you run ``show xyz`` and your condition is triggered you should be dropped
+into the python debugger:
+
+
+.. code-block:: none
+
+   > /usr/libexec/vyos/op_mode/show_nat_translations.py(109)process()
+   -> rule_type = rule.get('type', '')
+   (Pdb)
+
+You can type ``help`` to get an overview of the available commands, and
+``help command`` to get more information on each command.
+
+Useful commands are:
+
+* examine variables using ``pp(var)``
+* contine execution using ``cont``
+* get a backtrace using ``bt``
 
 Config Migration Scripts
 ------------------------
@@ -135,17 +187,20 @@ This can also be done permanently by changing ``/boot/grub/grub.cfg``.
 Priorities
 ==========
 
-VyOS CLI is all about priorities. Every CLI node has a corresponding ``node.def``
-file and possibly an attached script that is executed when the node is present.
-Nodes can have a priority, and on system bootup - or any other ``commit`` to the
-config all scripts are executed from lowest to higest priority. This is good as
-this gives a deterministic behavior.
+VyOS CLI is all about priorities. Every CLI node has a corresponding
+``node.def`` file and possibly an attached script that is executed when the
+node is present. Nodes can have a priority, and on system bootup - or any
+other ``commit`` to the config all scripts are executed from lowest to higest
+priority. This is good as this gives a deterministic behavior.
 
-To debug issues in priorities or to see what's going on in the background you can
-use the ``/opt/vyatta/sbin/priority.pl`` script which lists to you the execution
-order of the scripts.
+To debug issues in priorities or to see what's going on in the background
+you can use the ``/opt/vyatta/sbin/priority.pl`` script which lists to you
+the execution order of the scripts.
+
+.. stop_vyoslinter
 
 .. _vyatta-cfg: https://github.com/vyos/vyatta-cfg
 .. _bootchart.conf: https://github.com/vyos/vyos-build/blob/current/data/live-build-config/includes.chroot/etc/systemd/bootchart.conf
-
 .. include:: /_include/common-references.txt
+
+.. start_vyoslinter

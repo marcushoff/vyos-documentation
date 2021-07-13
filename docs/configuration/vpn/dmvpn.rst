@@ -11,7 +11,8 @@ technologies are actually standards based. The three technologies are:
 
 * :abbr:`NHRP (Next Hop Resolution Protocol)` :rfc:`2332`
 * :abbr:`mGRE (Multipoint Generic Routing Encapsulation)` :rfc:`1702`
-* :abbr:`IPSec (IP Security)` - too many RFCs to list, but start with :rfc:`4301`
+* :abbr:`IPSec (IP Security)` - too many RFCs to list, but start with
+  :rfc:`4301`
 
 NHRP provides the dynamic tunnel endpoint discovery mechanism (endpoint
 registration, and endpoint discovery/lookup), mGRE provides the tunnel
@@ -174,6 +175,8 @@ Each node (Hub and Spoke) uses an IP address from the network 172.16.253.128/29.
 The below referenced IP address `192.0.2.1` is used as example address
 representing a global unicast address under which the HUB can be contacted by
 each and every individual spoke.
+
+.. _dmvpn:example_configuration:
 
 Configuration
 =============

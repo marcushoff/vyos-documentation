@@ -1,3 +1,5 @@
+:lastproofread:2021-07-07
+
 .. _information:
 
 ***********
@@ -19,15 +21,15 @@ USB
 In the past serial interface have been defined as ttySx and ttyUSBx where x was
 an instance number of the serial interface. It was discovered that from system
 boot to system boot the mapping of USB based serial interfaces will differ,
-depending which driver was loaded first by the operating system. This will become
-rather painful if you not only have serial interfaces for a console server
-connected but in addition also a serial backed :ref:`wwan-interface`.
+depending which driver was loaded first by the operating system. This will
+become rather painful if you not only have serial interfaces for a console
+server connected but in addition also a serial backed :ref:`wwan-interface`.
 
-To overcome this issue and the fact that in almost 50% of all cheap USB to serial
-converters there is no serial number programmed, the USB to serial interface is
-now directly identified by the USB root bridge and bus it connects to. This
-somehow mimics the new network interface definitions we see in recend Linux
-distributions.
+To overcome this issue and the fact that in almost 50% of all cheap USB to
+serial converters there is no serial number programmed, the USB to serial
+interface is now directly identified by the USB root bridge and bus it connects
+to. This somehow mimics the new network interface definitions we see in recent
+Linux distributions.
 
 For additional details you can refer to https://phabricator.vyos.net/T2490.
 
@@ -69,9 +71,9 @@ For additional details you can refer to https://phabricator.vyos.net/T2490.
 
 .. opcmd:: show hardware usb serial
 
-  Retrieve a list and description of all connected USB serial devices. The device name
-  displayed, e.g. `usb0b2.4p1.0` can be directly used when accessing the serial console
-  as console-server device.
+  Retrieve a list and description of all connected USB serial devices. The
+  device name displayed, e.g. `usb0b2.4p1.0` can be directly used when accessing
+  the serial console as console-server device.
 
   .. code-block:: none
 
@@ -94,4 +96,60 @@ For additional details you can refer to https://phabricator.vyos.net/T2490.
     usb0b2.4p1.1     Quad_RS232-HS       Future Technology Devices International, Ltd
     usb0b2.4p1.2     Quad_RS232-HS       Future Technology Devices International, Ltd
     usb0b2.4p1.3     Quad_RS232-HS       Future Technology Devices International, Ltd
+
+.. _information_version:
+
+########
+Version
+########
+
+.. opcmd:: show version
+
+  Return the current running VyOS version and build information. This includes
+  also the name of the release train which is ``crux`` on VyOS 1.2, ``equuleus``
+  on VyOS 1.3 and ``sagitta`` on VyOS 1.4.
+
+  .. code-block:: none
+  
+    vyos@vyos:~$ show version  
+
+    Version:          VyOS 1.4-rolling-202106270801
+    Release Train:    sagitta
+
+    Built by:         autobuild@vyos.net
+    Built on:         Sun 27 Jun 2021 09:50 UTC
+    Build UUID:       ab43e735-edcb-405a-9f51-f16a1b104e52
+    Build Commit ID:  f544d75eab758f
+
+    Architecture:     x86_64
+    Boot via:         installed image
+    System type:      KVM guest
+
+    Hardware vendor:  QEMU
+    Hardware model:   Standard PC (i440FX + PIIX, 1996)
+    Hardware S/N:     
+    Hardware UUID:    Unknown
+
+    Copyright:        VyOS maintainers and contributors
+
+.. opcmd:: show version kernel
+
+  Return version number of the Linux Kernel used in this release.
+
+  .. code-block:: none
+
+    vyos@vyos:~$ show version kernel
+    5.10.46-amd64-vyos
+
+.. opcmd:: show version frr
+
+  Return version number of FRR (Free Range Routing - https://frrouting.org/)
+  used in this release. This is the routing control plane and a successor to GNU
+  Zebra and Quagga.
+
+    .. code-block:: none
+
+      vyos@vyos:~$ show version frr
+      FRRouting 7.5.1-20210625-00-gf07d935a2 (vyos).
+      Copyright 1996-2005 Kunihiro Ishiguro, et al.
 

@@ -54,13 +54,18 @@ interface, the interface must be configured for flow accounting.
    accounting.
 
 .. note:: Will be recorded only packets/flows on **incoming** direction in
-   configured interfaces.
+   configured interfaces by default.
 
 
 By default, recorded flows will be saved internally and can be listed with the
 CLI command. You may disable using the local in-memory table with the command:
 
 .. cfgcmd:: set system flow-accounting disable-imt
+
+   If you need to sample also egress traffic, you may want to
+   configure egress flow-accounting:
+
+.. cfgcmd:: set system flow-accounting enable-egress
 
    Internally, in flow-accounting processes exist a buffer for data exchanging
    between core process and plugins (each export target is a separated plugin).
@@ -121,7 +126,8 @@ NetFlow
 
    Per default every packet is sampled (that is, the sampling rate is 1).
 
-.. cfgcmd:: set system flow-accounting netflow timeout expiry-interval <interval>
+.. cfgcmd:: set system flow-accounting netflow timeout expiry-interval
+   <interval>
 
    Specifies the interval at which Netflow data will be sent to a collector. As
    per default, Netflow data will be sent every 60 seconds.

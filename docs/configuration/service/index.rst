@@ -12,14 +12,11 @@ Service
    console-server
    dhcp-relay
    dhcp-server
-   dhcpv6-relay
-   dhcpv6-server
    dns
    https
    ipoe-server
    lldp
    mdns
-   pppoe-advert
    pppoe-server
    router-advert
    salt-minion

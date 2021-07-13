@@ -24,7 +24,7 @@ The README.md file will guide you to use the this top level repository.
 Submit a Patch
 ==============
 
-Patches are always more then welcome. To have a clean and easy to maintain
+Patches are always more than welcome. To have a clean and easy to maintain
 repository we have some guidelines when working with Git. A clean repository
 eases the automatic generation of a changelog file.
 
@@ -658,8 +658,8 @@ Migrating old CLI
        validation is better left to commit-time scripts
    * - priority: 999
      - <properties> <priority>999</priority>
-     - Please leave a comment explaining why the priority was chosen (e.g. "after
-       interfaces are configured")
+     - Please leave a comment explaining why the priority was chosen
+       (e.g. "after interfaces are configured")
    * - multi:
      - <properties> <multi/>
      - Only applicable to leaf nodes
@@ -700,6 +700,9 @@ found. After a successful run the resulting Debian Package(s) will be deployed
 to our Debian repository which is used during build time. It is located here:
 http://dev.packages.vyos.net/repositories/.
 
+
+.. stop_vyoslinter
+
 .. _Jenkins: https://jenkins.io/
 .. _Dockerhub: https://hub.docker.com/u/vyos/
 .. _process: https://blog.vyos.io/vyos-development-digest-10
@@ -712,3 +715,5 @@ http://dev.packages.vyos.net/repositories/.
 .. _`MAC address`: https://github.com/vyos/vyos-1x/tree/current/interface-definitions/include/interface-mac.xml.i
 
 .. include:: /_include/common-references.txt
+
+.. start_vyoslinter
